@@ -1,0 +1,58 @@
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#111;
+    color:#fff;
+}
+
+.slider{
+    overflow:hidden;
+    width:100%;
+    padding:20px 0;
+}
+
+.slider-track{
+    display:flex;
+    width:max-content;
+    animation: scroll 25s linear infinite;
+    gap:20px;
+}
+
+.card{
+    width:250px;
+    background:#1c1c1c;
+    border-radius:20px;
+    padding:10px;
+    flex-shrink:0;
+    box-shadow:0 4px 10px rgba(0,0,0,0.4);
+}
+
+.card img{
+    width:100%;
+    border-radius:15px;
+    display:block;
+}
+
+.card h3{
+    margin:10px 0 6px;
+    font-size:18px;
+}
+
+.card p{
+    font-size:14px;
+    color:#ccc;
+}
+
+@keyframes scroll{
+    from{
+        transform: translateX(0);
+    }
+    to{
+        transform: translateX(-50%);
+    }
+}
+
+/* Pause on hover */
+.slider:hover .slider-track{
+    animation-play-state: paused;
+}

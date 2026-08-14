@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Flick | Create Account</title>
+
+    <link rel="stylesheet" href="css/auth.css">
+
+</head>
+
+<body>
+
+    <main class="auth-page">
+
+        <!-- Left section -->
+        <section class="visual-section">
+
+            <div class="visual-overlay"></div>
+
+            <header class="brand">
+
+                <div class="brand-icon">▶</div>
+
+                <span>FLICK</span>
+
+            </header>
+
+
+            <div class="visual-content">
+
+                <p class="eyebrow">
+                    YOUR MOVIE • YOUR OPINION
+                </p>
+
+                <h1>
+                    Turn movie opinions
+                    into <span>meaningful insights.</span>
+                </h1>
+
+                <p class="visual-description">
+                    Join Flick and explore intelligent
+                    sentiment analysis for movie reviews.
+                </p>
+
+
+                <div class="feature-row">
+
+                    <div class="feature-item">
+
+                        <div class="feature-icon">✦</div>
+
+                        <div>
+                            <strong>Analyze Reviews</strong>
+                            <small>Understand audience opinions</small>
+                        </div>
+
+                    </div>
+
+
+                    <div class="feature-item">
+
+                        <div class="feature-icon">◉</div>
+
+                        <div>
+                            <strong>Discover Insights</strong>
+                            <small>Explore sentiment patterns</small>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="visual-footer">
+                Flick · Intelligent Movie Review Analysis
+            </div>
+
+        </section>
+
+
+        <!-- Signup section -->
+        <section class="form-section">
+
+            <div class="auth-wrapper signup-wrapper">
+
+                <div class="mobile-brand">
+
+                    <div class="brand-icon">▶</div>
+
+                    Flick
+
+                </div>
+
+
+                <div class="form-header">
+
+                    <p class="welcome-label">
+                        GET STARTED
+                    </p>
+
+                    <h2>Create your account</h2>
+
+                    <p>
+                        Join Flick and start exploring.
+                    </p>
+
+                </div>
+
+
+                <form id="signupForm" novalidate>
+
+
+                    <!-- Name -->
+
+                    <div class="field">
+
+                        <label for="signupName">
+                            Full name
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-symbol">◆</span>
+
+                            <input
+                                type="text"
+                                id="signupName"
+                                placeholder="Your full name"
+                                autocomplete="name"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Email -->
+
+                    <div class="field">
+
+                        <label for="signupEmail">
+                            Email address
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-symbol">@</span>
+
+                            <input
+                                type="email"
+                                id="signupEmail"
+                                placeholder="name@example.com"
+                                autocomplete="email"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Password -->
+
+                    <div class="field">
+
+                        <label for="signupPassword">
+                            Password
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-symbol">●</span>
+
+                            <input
+                                type="password"
+                                id="signupPassword"
+                                placeholder="Create a password"
+                                autocomplete="new-password"
+                            >
+
+                            <button
+                                type="button"
+                                class="eye-button"
+                                id="signupEye"
+                                aria-label="Show password"
+                            >
+                                ◉
+                            </button>
+
+                        </div>
+
+
+                        <div class="password-strength">
+
+                            <div class="strength-track">
+
+                                <span id="strength1"></span>
+                                <span id="strength2"></span>
+                                <span id="strength3"></span>
+                                <span id="strength4"></span>
+
+                            </div>
+
+                            <small id="strengthText">
+                                Use at least 8 characters
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Confirm password -->
+
+                    <div class="field">
+
+                        <label for="confirmPassword">
+                            Confirm password
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-symbol">●</span>
+
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                placeholder="Repeat your password"
+                                autocomplete="new-password"
+                            >
+
+                            <button
+                                type="button"
+                                class="eye-button"
+                                id="confirmEye"
+                                aria-label="Show password"
+                            >
+                                ◉
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="signupMessage"
+                        class="message"
+                    ></div>
+
+
+                    <button
+                        type="submit"
+                        class="main-button"
+                    >
+
+                        <span>Create account</span>
+
+                        <span class="button-arrow">→</span>
+
+                    </button>
+
+                </form>
+
+
+                <div class="account-switch">
+
+                    <span>Already have an account?</span>
+
+                    <a href="login.html">
+                        Sign in
+                    </a>
+
+                </div>
+
+
+                <p class="legal-text">
+
+                    By creating an account, you agree to
+                    Flick's Terms of Service and
+                    Privacy Policy.
+
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="js/signup.js"></script>
+
+</body>
+</html>

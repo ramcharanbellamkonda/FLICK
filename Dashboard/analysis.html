@@ -1,0 +1,3027 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>FLICK - Sentiment Analysis</title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+    <link rel = "stylesheet" href = "style.css">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <style>
+
+        /* =====================================================
+           RESET
+           ===================================================== */
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        html,
+        body {
+            width: 100%;
+            min-height: 100%;
+        }
+
+
+        body {
+
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 15% 20%,
+                    rgba(80, 70, 160, 0.18),
+                    transparent 35%
+                ),
+
+                radial-gradient(
+                    circle at 85% 80%,
+                    rgba(30, 120, 180, 0.12),
+                    transparent 35%
+                ),
+
+                #070707;
+
+            color: #ffffff;
+
+            font-family:
+                "Inter",
+                Arial,
+                sans-serif;
+
+            overflow-x: hidden;
+
+        }
+
+
+        button,
+        input,
+        textarea {
+            font-family: inherit;
+        }
+
+
+        /* =====================================================
+           NAVBAR
+           ===================================================== */
+
+        .navbar {
+
+            width: 100%;
+
+            min-height: 76px;
+
+            padding:
+                0 5vw;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            border-bottom:
+                1px solid
+                rgba(255,255,255,0.08);
+
+            background:
+                rgba(7,7,7,0.92);
+
+            backdrop-filter:
+                blur(14px);
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 100;
+
+        }
+
+
+        .logo {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            font-size: 24px;
+
+            font-weight: 800;
+
+            letter-spacing: 2px;
+
+        }
+
+
+        .logo-star {
+
+            width: 38px;
+
+            height: 38px;
+
+            border-radius: 10px;
+
+            overflow: hidden;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background: #ffffff;
+
+        }
+
+
+        .logo-star img {
+
+            width: 100%;
+
+            height: 100%;
+
+            object-fit: cover;
+
+        }
+
+
+        .nav-links {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 32px;
+
+        }
+
+
+        .nav-links a {
+
+            color: #aaaaaa;
+
+            text-decoration: none;
+
+            font-size: 13px;
+
+            font-weight: 500;
+
+            transition: 0.2s;
+
+        }
+
+
+        .nav-links a:hover {
+
+            color: #ffffff;
+
+        }
+
+
+        .contact-btn {
+
+            padding:
+                11px 18px;
+
+            border:
+                1px solid
+                rgba(255,255,255,0.25);
+
+            border-radius: 8px;
+
+            color: #ffffff;
+
+            text-decoration: none;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            transition: 0.2s;
+
+        }
+
+
+        .contact-btn:hover {
+
+            background: #ffffff;
+
+            color: #000000;
+
+        }
+
+
+        /* =====================================================
+           MAIN PAGE
+           ===================================================== */
+
+        .page {
+
+            width: 100%;
+
+            min-height:
+                calc(100vh - 76px);
+
+            padding:
+                55px 5vw 70px;
+
+        }
+
+
+        .page-heading {
+
+            width: 100%;
+
+            text-align: center;
+
+            margin-bottom: 40px;
+
+        }
+
+
+        .page-heading .eyebrow {
+
+            color: #888888;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            letter-spacing: 3px;
+
+            text-transform: uppercase;
+
+            margin-bottom: 14px;
+
+        }
+
+
+        .page-heading h1 {
+
+            font-size:
+                clamp(32px, 5vw, 64px);
+
+            line-height: 1.05;
+
+            font-weight: 800;
+
+            letter-spacing: -2px;
+
+            margin-bottom: 14px;
+
+        }
+
+
+        .page-heading h1 span {
+
+            color: #888888;
+
+        }
+
+
+        .page-heading p {
+
+            color: #929292;
+
+            font-size: 15px;
+
+            max-width: 650px;
+
+            margin: auto;
+
+            line-height: 1.7;
+
+        }
+
+
+        /* =====================================================
+           MAIN ANALYSIS AREA
+           ===================================================== */
+
+        .analysis-layout {
+
+            width: 100%;
+
+            max-width: 1400px;
+
+            margin: auto;
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1.7fr)
+                minmax(300px, 0.8fr);
+
+            gap: 25px;
+
+        }
+
+
+        /* =====================================================
+           CARD
+           ===================================================== */
+
+        .card {
+
+            width: 100%;
+
+            background:
+                rgba(255,255,255,0.035);
+
+            border:
+                1px solid
+                rgba(255,255,255,0.09);
+
+            border-radius: 18px;
+
+            padding: 28px;
+
+            box-shadow:
+                0 20px 60px
+                rgba(0,0,0,0.25);
+
+        }
+
+
+        /* =====================================================
+           CARD HEADER
+           ===================================================== */
+
+        .card-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .card-header h2 {
+
+            font-size: 20px;
+
+            font-weight: 700;
+
+        }
+
+
+        .card-header p {
+
+            color: #777777;
+
+            font-size: 12px;
+
+            margin-top: 6px;
+
+        }
+
+
+        .online {
+
+            color: #65e39a;
+
+            font-size: 11px;
+
+            font-weight: 700;
+
+            letter-spacing: 1px;
+
+        }
+
+
+        /* =====================================================
+           TABS
+           ===================================================== */
+
+        .tabs {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 8px;
+
+            padding: 6px;
+
+            background:
+                rgba(255,255,255,0.035);
+
+            border-radius: 12px;
+
+            margin-bottom: 22px;
+
+        }
+
+
+        .tab {
+
+            border: none;
+
+            background: transparent;
+
+            color: #777777;
+
+            padding: 13px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            transition: 0.2s;
+
+        }
+
+
+        .tab:hover {
+
+            color: #ffffff;
+
+        }
+
+
+        .tab.active {
+
+            background: #ffffff;
+
+            color: #000000;
+
+        }
+
+
+        /* =====================================================
+           PANELS
+           ===================================================== */
+
+        .panel {
+
+            display: none;
+
+        }
+
+
+        .panel.active {
+
+            display: block;
+
+        }
+
+
+        /* =====================================================
+           TEXT AREA
+           ===================================================== */
+
+        textarea {
+
+            width: 100%;
+
+            min-height: 300px;
+
+            resize: vertical;
+
+            padding: 22px;
+
+            border:
+                1px solid
+                rgba(255,255,255,0.10);
+
+            border-radius: 14px;
+
+            background:
+                rgba(0,0,0,0.28);
+
+            color: #ffffff;
+
+            outline: none;
+
+            font-size: 15px;
+
+            line-height: 1.7;
+
+        }
+
+
+        textarea:focus {
+
+            border-color:
+                rgba(255,255,255,0.35);
+
+        }
+
+
+        textarea::placeholder {
+
+            color: #555555;
+
+        }
+
+
+        .text-footer {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            margin-top: 10px;
+
+            color: #666666;
+
+            font-size: 11px;
+
+        }
+
+
+        /* =====================================================
+           MEDIA PANEL
+           ===================================================== */
+
+        .media-box {
+
+            min-height: 300px;
+
+            border:
+                1px dashed
+                rgba(255,255,255,0.16);
+
+            border-radius: 14px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+            align-items: center;
+
+            padding: 30px;
+
+            text-align: center;
+
+            background:
+                rgba(0,0,0,0.20);
+
+        }
+
+
+        .media-icon {
+
+            font-size: 48px;
+
+            margin-bottom: 15px;
+
+        }
+
+
+        .media-box h3 {
+
+            font-size: 19px;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        .media-box p {
+
+            color: #777777;
+
+            font-size: 13px;
+
+            max-width: 500px;
+
+            line-height: 1.6;
+
+            margin-bottom: 22px;
+
+        }
+
+
+        .buttons {
+
+            display: flex;
+
+            gap: 10px;
+
+            justify-content: center;
+
+            flex-wrap: wrap;
+
+        }
+
+
+        .upload-button,
+        .record-button {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 8px;
+
+            padding:
+                12px 18px;
+
+            border-radius: 9px;
+
+            cursor: pointer;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            transition: 0.2s;
+
+        }
+
+
+        .upload-button {
+
+            background: #ffffff;
+
+            color: #000000;
+
+        }
+
+
+        .record-button {
+
+            background:
+                transparent;
+
+            color: #ffffff;
+
+            border:
+                1px solid
+                rgba(255,255,255,0.20);
+
+        }
+
+
+        .upload-button:hover,
+        .record-button:hover {
+
+            transform:
+                translateY(-2px);
+
+        }
+
+
+        .recording {
+
+            border-color: #ff5555;
+
+            color: #ff5555;
+
+            animation:
+                recordingPulse 1s infinite;
+
+        }
+
+
+        @keyframes recordingPulse {
+
+            50% {
+                opacity: 0.5;
+            }
+
+        }
+
+
+        .preview {
+
+            width: 100%;
+
+            margin-top: 20px;
+
+        }
+
+
+        .preview audio,
+        .preview video {
+
+            width: 100%;
+
+            max-height: 380px;
+
+            border-radius: 12px;
+
+        }
+
+
+        /* =====================================================
+           CAMERA
+           ===================================================== */
+
+        #cameraPreview {
+
+            width: 100%;
+
+            max-height: 380px;
+
+            border-radius: 12px;
+
+            display: none;
+
+            object-fit: cover;
+
+            margin-top: 20px;
+
+        }
+
+
+        /* =====================================================
+           STATUS
+           ===================================================== */
+
+        .status-box {
+
+            margin-top: 16px;
+
+            padding: 12px 15px;
+
+            border-radius: 9px;
+
+            background:
+                rgba(255,255,255,0.035);
+
+            color: #888888;
+
+            font-size: 12px;
+
+            text-align: center;
+
+        }
+
+
+        /* =====================================================
+           TRANSCRIPT
+           ===================================================== */
+
+        .transcript {
+
+            display: none;
+
+            margin-top: 18px;
+
+            padding: 18px;
+
+            border-radius: 12px;
+
+            background:
+                rgba(255,255,255,0.035);
+
+            border:
+                1px solid
+                rgba(255,255,255,0.08);
+
+            color: #cccccc;
+
+            font-size: 13px;
+
+            line-height: 1.7;
+
+            text-align: left;
+
+            max-height: 180px;
+
+            overflow-y: auto;
+
+        }
+
+
+        .transcript strong {
+
+            color: #ffffff;
+
+        }
+
+
+        /* =====================================================
+           ANALYZE BUTTON
+           ===================================================== */
+
+        .analyze-button {
+
+            width: 100%;
+
+            margin-top: 20px;
+
+            padding: 17px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background: #ffffff;
+
+            color: #000000;
+
+            font-size: 14px;
+
+            font-weight: 800;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+
+        }
+
+
+        .analyze-button:hover {
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 10px 30px
+                rgba(255,255,255,0.10);
+
+        }
+
+
+        .analyze-button:disabled {
+
+            opacity: 0.5;
+
+            cursor: wait;
+
+            transform: none;
+
+        }
+
+
+        /* =====================================================
+           RIGHT SIDE
+           ===================================================== */
+
+        .result-card {
+
+            display: flex;
+
+            flex-direction: column;
+
+            min-height: 100%;
+
+        }
+
+
+        .result-title {
+
+            font-size: 14px;
+
+            color: #777777;
+
+            text-transform: uppercase;
+
+            letter-spacing: 2px;
+
+            font-weight: 700;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .sentiment-result {
+
+            flex: 1;
+
+            min-height: 250px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+            text-align: center;
+
+            border-radius: 14px;
+
+            background:
+                rgba(255,255,255,0.025);
+
+            border:
+                1px solid
+                rgba(255,255,255,0.07);
+
+        }
+
+
+        .result-emoji {
+
+            font-size: 65px;
+
+            margin-bottom: 18px;
+
+        }
+
+
+        .sentiment-result h2 {
+
+            font-size: 32px;
+
+            font-weight: 800;
+
+        }
+
+
+        .sentiment-result p {
+
+            color: #777777;
+
+            font-size: 12px;
+
+            margin-top: 8px;
+
+        }
+
+
+        .result-details {
+
+            margin-top: 20px;
+
+            display: grid;
+
+            gap: 10px;
+
+        }
+
+
+        .detail {
+
+            padding: 15px;
+
+            border-radius: 10px;
+
+            background:
+                rgba(255,255,255,0.035);
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+        }
+
+
+        .detail span:first-child {
+
+            color: #777777;
+
+            font-size: 12px;
+
+        }
+
+
+        .detail span:last-child {
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+        }
+
+
+        /* =====================================================
+           KEYWORDS
+           ===================================================== */
+
+        .keywords {
+
+            margin-top: 20px;
+
+        }
+
+
+        .keywords-title {
+
+            color: #777777;
+
+            font-size: 11px;
+
+            text-transform: uppercase;
+
+            letter-spacing: 2px;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .keyword-list {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 7px;
+
+        }
+
+
+        .keyword {
+
+            padding:
+                7px 10px;
+
+            border-radius: 20px;
+
+            background:
+                rgba(255,255,255,0.06);
+
+            color: #aaaaaa;
+
+            font-size: 11px;
+
+        }
+
+
+        /* =====================================================
+           STATUS COLORS
+           ===================================================== */
+
+        .positive {
+
+            color: #67e49c;
+
+        }
+
+
+        .negative {
+
+            color: #ff7070;
+
+        }
+
+
+        .neutral {
+
+            color: #ffc65b;
+
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+           ===================================================== */
+
+        @media (
+            max-width: 950px
+        ) {
+
+            .nav-links {
+
+                display: none;
+
+            }
+
+
+            .analysis-layout {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .result-card {
+
+                min-height: auto;
+
+            }
+
+        }
+
+
+        @media (
+            max-width: 600px
+        ) {
+
+            .navbar {
+
+                padding:
+                    0 20px;
+
+            }
+
+
+            .contact-btn {
+
+                display: none;
+
+            }
+
+
+            .page {
+
+                padding:
+                    35px 18px 50px;
+
+            }
+
+
+            .card {
+
+                padding: 18px;
+
+            }
+
+
+            textarea {
+
+                min-height: 240px;
+
+            }
+
+
+            .page-heading h1 {
+
+                font-size: 35px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     NAVBAR
+     ========================================================= -->
+
+
+
+
+<!-- =========================================================
+     PAGE
+     ========================================================= -->
+
+<main class="page">
+
+
+    <!-- =====================================================
+         HEADING
+         ===================================================== -->
+
+    <section class="page-heading">
+
+        <div class="eyebrow">
+            FLICK AI
+        </div>
+
+         <div id="header"></div>
+
+
+        <p>
+            Enter a review, record audio, or record a video.
+            FLICK converts speech to text and analyzes it
+            using your trained sentiment model.
+        </p>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         MAIN GRID
+         ===================================================== -->
+
+    <section class="analysis-layout">
+
+
+        <!-- =================================================
+             LEFT
+             ================================================= -->
+
+        <div class="card">
+
+
+            <div class="card-header">
+
+                <div>
+
+                    <h2>
+                        Live Sentiment Analysis
+                    </h2>
+
+                    <p>
+                        Real-time NLP prediction
+                    </p>
+
+                </div>
+
+
+                <div class="online">
+                    ● ONLINE
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 TABS
+                 ================================================= -->
+
+            <div class="tabs">
+
+
+                <button
+                    class="tab active"
+                    id="textTab"
+                    onclick="showPanel('text')"
+                >
+                    ✍ TEXT
+                </button>
+
+
+                <button
+                    class="tab"
+                    id="audioTab"
+                    onclick="showPanel('audio')"
+                >
+                    🎙 AUDIO
+                </button>
+
+
+                <button
+                    class="tab"
+                    id="videoTab"
+                    onclick="showPanel('video')"
+                >
+                    🎥 VIDEO
+                </button>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 TEXT
+                 ================================================= -->
+
+            <div
+                class="panel active"
+                id="textPanel"
+            >
+
+                <textarea
+                    id="reviewInput"
+                    placeholder="Type or paste your English movie review here..."
+                ></textarea>
+
+
+                <div class="text-footer">
+
+                    <span>
+                        Enter your movie review
+                    </span>
+
+                    <span id="charCount">
+                        0 characters
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 AUDIO
+                 ================================================= -->
+
+            <div
+                class="panel"
+                id="audioPanel"
+            >
+
+                <div class="media-box">
+
+
+                    <div class="media-icon">
+                        🎙️
+                    </div>
+
+
+                    <h3>
+                        Audio Review
+                    </h3>
+
+
+                    <p>
+                        Upload an English audio file or
+                        record your review directly using
+                        your microphone.
+                    </p>
+
+
+                    <div class="buttons">
+
+
+                        <label class="upload-button">
+
+                            📁 Choose Audio
+
+                            <input
+                                type="file"
+                                id="audioInput"
+                                accept="audio/*"
+                                hidden
+                            >
+
+                        </label>
+
+
+                        <button
+                            class="record-button"
+                            id="audioRecordButton"
+                            onclick="toggleAudioRecording()"
+                        >
+
+                            🔴 Start Recording
+
+                        </button>
+
+
+                    </div>
+
+
+                    <div
+                        class="status-box"
+                        id="audioStatus"
+                    >
+                        Ready
+                    </div>
+
+
+                    <div
+                        class="preview"
+                        id="audioPreview"
+                    ></div>
+
+
+                    <div
+                        class="transcript"
+                        id="audioTranscript"
+                    ></div>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 VIDEO
+                 ================================================= -->
+
+            <div
+                class="panel"
+                id="videoPanel"
+            >
+
+                <div class="media-box">
+
+
+                    <div class="media-icon">
+                        🎥
+                    </div>
+
+
+                    <h3>
+                        Video Review
+                    </h3>
+
+
+                    <p>
+                        Upload an English video or record
+                        a video. FLICK extracts the audio
+                        and converts the speech to text.
+                    </p>
+
+
+                    <div class="buttons">
+
+
+                        <label class="upload-button">
+
+                            📁 Choose Video
+
+                            <input
+                                type="file"
+                                id="videoInput"
+                                accept="video/*"
+                                hidden
+                            >
+
+                        </label>
+
+
+                        <button
+                            class="record-button"
+                            id="videoRecordButton"
+                            onclick="toggleVideoRecording()"
+                        >
+
+                            🎥 Start Recording
+
+                        </button>
+
+
+                    </div>
+
+
+                    <video
+                        id="cameraPreview"
+                        autoplay
+                        muted
+                        playsinline
+                    ></video>
+
+
+                    <div
+                        class="status-box"
+                        id="videoStatus"
+                    >
+                        Ready
+                    </div>
+
+
+                    <div
+                        class="preview"
+                        id="videoPreview"
+                    ></div>
+
+
+                    <div
+                        class="transcript"
+                        id="videoTranscript"
+                    ></div>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 ANALYZE
+                 ================================================= -->
+
+            <button
+                class="analyze-button"
+                id="analyzeButton"
+                onclick="analyzeReview()"
+            >
+
+                🔍 ANALYZE REVIEW
+
+            </button>
+
+
+            <div
+                class="status-box"
+                id="mainStatus"
+            >
+                Enter, record, or upload a review.
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             RIGHT RESULT
+             ================================================= -->
+
+        <div class="card result-card">
+
+
+            <div class="result-title">
+                Analysis Result
+            </div>
+
+
+            <div
+                class="sentiment-result"
+                id="sentimentResult"
+            >
+
+
+                <div
+                    class="result-emoji"
+                    id="resultEmoji"
+                >
+                    🎭
+                </div>
+
+
+                <h2
+                    id="sentimentText"
+                >
+                    —
+                </h2>
+
+
+                <p
+                    id="confidenceText"
+                >
+                    Waiting for analysis
+                </p>
+
+
+            </div>
+
+
+
+            <div class="result-details">
+
+
+                <div class="detail">
+
+                    <span>
+                        Model
+                    </span>
+
+                    <span>
+                        LinearSVC
+                    </span>
+
+                </div>
+
+
+                <div class="detail">
+
+                    <span>
+                        Features
+                    </span>
+
+                    <span>
+                        TF-IDF
+                    </span>
+
+                </div>
+
+
+                <div class="detail">
+
+                    <span>
+                        Prediction
+                    </span>
+
+                    <span id="predictionValue">
+                        —
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+
+            <div class="keywords">
+
+                <div class="keywords-title">
+                    Keywords
+                </div>
+
+
+                <div
+                    class="keyword-list"
+                    id="keywordList"
+                >
+
+                    <span class="keyword">
+                        Waiting...
+                    </span>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+</main>
+
+
+
+<script>
+
+
+/* =========================================================
+   BACKEND
+   ========================================================= */
+
+const BACKEND_URL =
+    window.location.origin;
+
+
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
+
+const reviewInput =
+    document.getElementById(
+        "reviewInput"
+    );
+
+
+const charCount =
+    document.getElementById(
+        "charCount"
+    );
+
+
+const mainStatus =
+    document.getElementById(
+        "mainStatus"
+    );
+
+
+const analyzeButton =
+    document.getElementById(
+        "analyzeButton"
+    );
+
+
+
+/* =========================================================
+   RECORDING VARIABLES
+   ========================================================= */
+
+let audioRecorder = null;
+
+let audioChunks = [];
+
+let videoRecorder = null;
+
+let videoChunks = [];
+
+let cameraStream = null;
+
+
+
+/* =========================================================
+   CHARACTER COUNT
+   ========================================================= */
+
+reviewInput.addEventListener(
+    "input",
+    function () {
+
+        charCount.textContent =
+            reviewInput.value.length +
+            " characters";
+
+    }
+);
+
+
+
+/* =========================================================
+   PANEL SWITCHING
+   ========================================================= */
+
+function showPanel(
+    type
+) {
+
+
+    const panels = [
+
+        "textPanel",
+
+        "audioPanel",
+
+        "videoPanel"
+
+    ];
+
+
+    const tabs = [
+
+        "textTab",
+
+        "audioTab",
+
+        "videoTab"
+
+    ];
+
+
+    panels.forEach(
+        function (id) {
+
+            document
+                .getElementById(id)
+                .classList.remove(
+                    "active"
+                );
+
+        }
+    );
+
+
+    tabs.forEach(
+        function (id) {
+
+            document
+                .getElementById(id)
+                .classList.remove(
+                    "active"
+                );
+
+        }
+    );
+
+
+    if (
+        type === "text"
+    ) {
+
+        document
+            .getElementById("textPanel")
+            .classList.add("active");
+
+        document
+            .getElementById("textTab")
+            .classList.add("active");
+
+    }
+
+
+    if (
+        type === "audio"
+    ) {
+
+        document
+            .getElementById("audioPanel")
+            .classList.add("active");
+
+        document
+            .getElementById("audioTab")
+            .classList.add("active");
+
+    }
+
+
+    if (
+        type === "video"
+    ) {
+
+        document
+            .getElementById("videoPanel")
+            .classList.add("active");
+
+        document
+            .getElementById("videoTab")
+            .classList.add("active");
+
+    }
+
+}
+
+
+
+/* =========================================================
+   AUDIO UPLOAD
+   ========================================================= */
+
+document
+    .getElementById("audioInput")
+    .addEventListener(
+        "change",
+        async function () {
+
+            const file =
+                this.files[0];
+
+
+            if (!file) {
+
+                return;
+
+            }
+
+
+            document
+                .getElementById(
+                    "audioStatus"
+                )
+                .textContent =
+                "⏳ Processing audio...";
+
+
+            await transcribeFile(
+                file,
+                "audio"
+            );
+
+        }
+    );
+
+
+
+/* =========================================================
+   VIDEO UPLOAD
+   ========================================================= */
+
+document
+    .getElementById("videoInput")
+    .addEventListener(
+        "change",
+        async function () {
+
+            const file =
+                this.files[0];
+
+
+            if (!file) {
+
+                return;
+
+            }
+
+
+            document
+                .getElementById(
+                    "videoStatus"
+                )
+                .textContent =
+                "⏳ Extracting audio from video...";
+
+
+            await transcribeFile(
+                file,
+                "video"
+            );
+
+        }
+    );
+
+
+
+/* =========================================================
+   AUDIO RECORDING
+   ========================================================= */
+
+async function toggleAudioRecording() {
+
+
+    const button =
+        document.getElementById(
+            "audioRecordButton"
+        );
+
+
+    const status =
+        document.getElementById(
+            "audioStatus"
+        );
+
+
+    if (
+        audioRecorder &&
+        audioRecorder.state ===
+        "recording"
+    ) {
+
+
+        audioRecorder.stop();
+
+
+        button.textContent =
+            "🔴 Start Recording";
+
+
+        button.classList.remove(
+            "recording"
+        );
+
+
+        return;
+
+    }
+
+
+    try {
+
+
+        const stream =
+            await navigator
+                .mediaDevices
+                .getUserMedia({
+                    audio: true
+                });
+
+
+        audioChunks = [];
+
+
+        let mimeType =
+            "audio/webm";
+
+
+        if (
+            !MediaRecorder.isTypeSupported(
+                "audio/webm"
+            )
+        ) {
+
+            mimeType = "";
+
+        }
+
+
+        audioRecorder =
+            mimeType
+
+                ? new MediaRecorder(
+                    stream,
+                    {
+                        mimeType:
+                            mimeType
+                    }
+                )
+
+                : new MediaRecorder(
+                    stream
+                );
+
+
+        audioRecorder.ondataavailable =
+            function (event) {
+
+                if (
+                    event.data.size > 0
+                ) {
+
+                    audioChunks.push(
+                        event.data
+                    );
+
+                }
+
+            };
+
+
+        audioRecorder.onstart =
+            function () {
+
+                status.textContent =
+                    "🔴 Recording... Speak your English review.";
+
+                button.textContent =
+                    "⏹ Stop Recording";
+
+                button.classList.add(
+                    "recording"
+                );
+
+            };
+
+
+        audioRecorder.onstop =
+            async function () {
+
+
+                stream
+                    .getTracks()
+                    .forEach(
+                        function (track) {
+
+                            track.stop();
+
+                        }
+                    );
+
+
+                const blob =
+                    new Blob(
+                        audioChunks,
+                        {
+                            type:
+                                audioRecorder.mimeType ||
+                                "audio/webm"
+                        }
+                    );
+
+
+                status.textContent =
+                    "⏳ Converting speech to text...";
+
+
+                await transcribeFile(
+                    blob,
+                    "audio"
+                );
+
+            };
+
+
+        audioRecorder.start();
+
+    }
+    catch (error) {
+
+
+        console.error(
+            error
+        );
+
+
+        status.textContent =
+            "❌ Microphone access failed.";
+
+        alert(
+            "Please allow microphone access in Chrome."
+        );
+
+    }
+
+}
+
+
+
+/* =========================================================
+   VIDEO RECORDING
+   ========================================================= */
+
+async function toggleVideoRecording() {
+
+
+    const button =
+        document.getElementById(
+            "videoRecordButton"
+        );
+
+
+    const status =
+        document.getElementById(
+            "videoStatus"
+        );
+
+
+    const preview =
+        document.getElementById(
+            "cameraPreview"
+        );
+
+
+    if (
+        videoRecorder &&
+        videoRecorder.state ===
+        "recording"
+    ) {
+
+
+        videoRecorder.stop();
+
+
+        button.textContent =
+            "🎥 Start Recording";
+
+
+        button.classList.remove(
+            "recording"
+        );
+
+
+        return;
+
+    }
+
+
+    try {
+
+
+        cameraStream =
+            await navigator
+                .mediaDevices
+                .getUserMedia({
+
+                    video: true,
+
+                    audio: true
+
+                });
+
+
+        preview.srcObject =
+            cameraStream;
+
+
+        preview.style.display =
+            "block";
+
+
+        videoChunks = [];
+
+
+        let mimeType =
+            "video/webm";
+
+
+        if (
+            !MediaRecorder.isTypeSupported(
+                "video/webm"
+            )
+        ) {
+
+            mimeType = "";
+
+        }
+
+
+        videoRecorder =
+            mimeType
+
+                ? new MediaRecorder(
+                    cameraStream,
+                    {
+                        mimeType:
+                            mimeType
+                    }
+                )
+
+                : new MediaRecorder(
+                    cameraStream
+                );
+
+
+        videoRecorder.ondataavailable =
+            function (event) {
+
+                if (
+                    event.data.size > 0
+                ) {
+
+                    videoChunks.push(
+                        event.data
+                    );
+
+                }
+
+            };
+
+
+        videoRecorder.onstart =
+            function () {
+
+                status.textContent =
+                    "🔴 Recording video + audio...";
+
+                button.textContent =
+                    "⏹ Stop Recording";
+
+                button.classList.add(
+                    "recording"
+                );
+
+            };
+
+
+        videoRecorder.onstop =
+            async function () {
+
+
+                cameraStream
+                    .getTracks()
+                    .forEach(
+                        function (track) {
+
+                            track.stop();
+
+                        }
+                    );
+
+
+                preview.srcObject =
+                    null;
+
+                preview.style.display =
+                    "none";
+
+
+                const blob =
+                    new Blob(
+                        videoChunks,
+                        {
+                            type:
+                                videoRecorder.mimeType ||
+                                "video/webm"
+                        }
+                    );
+
+
+                status.textContent =
+                    "⏳ Extracting audio and converting speech to text...";
+
+
+                await transcribeFile(
+                    blob,
+                    "video"
+                );
+
+            };
+
+
+        videoRecorder.start();
+
+    }
+    catch (error) {
+
+
+        console.error(
+            error
+        );
+
+
+        status.textContent =
+            "❌ Camera/microphone access failed.";
+
+        alert(
+            "Please allow camera and microphone access in Chrome."
+        );
+
+    }
+
+}
+
+
+
+/* =========================================================
+   TRANSCRIBE AUDIO / VIDEO
+   ========================================================= */
+
+async function transcribeFile(
+    file,
+    type
+) {
+
+
+    try {
+
+
+        const formData =
+            new FormData();
+
+
+        const filename =
+            type === "audio"
+
+                ? "recorded_audio.webm"
+
+                : "recorded_video.webm";
+
+
+        formData.append(
+            "file",
+            file,
+            filename
+        );
+
+
+        const response =
+            await fetch(
+
+                BACKEND_URL +
+                "/transcribe",
+
+                {
+
+                    method: "POST",
+
+                    body: formData
+
+                }
+
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.error ||
+                "Transcription failed."
+            );
+
+        }
+
+
+        const transcript =
+            data.text;
+
+
+        /* Put text in main box */
+
+        reviewInput.value =
+            transcript;
+
+
+        charCount.textContent =
+            transcript.length +
+            " characters";
+
+
+        /* =================================================
+           AUDIO RESULT
+           ================================================= */
+
+        if (
+            type === "audio"
+        ) {
+
+
+            const status =
+                document.getElementById(
+                    "audioStatus"
+                );
+
+
+            status.textContent =
+                "✅ Audio converted to text.";
+
+
+            const transcriptBox =
+                document.getElementById(
+                    "audioTranscript"
+                );
+
+
+            transcriptBox.style.display =
+                "block";
+
+
+            transcriptBox.innerHTML =
+
+                "<strong>Detected English text:</strong><br><br>" +
+
+                escapeHtml(
+                    transcript
+                );
+
+
+            const preview =
+                document.getElementById(
+                    "audioPreview"
+                );
+
+
+            const url =
+                URL.createObjectURL(
+                    file
+                );
+
+
+            preview.innerHTML =
+
+                `
+                <audio
+                    controls
+                    src="${url}"
+                ></audio>
+                `;
+
+        }
+
+
+        /* =================================================
+           VIDEO RESULT
+           ================================================= */
+
+        else {
+
+
+            const status =
+                document.getElementById(
+                    "videoStatus"
+                );
+
+
+            status.textContent =
+                "✅ Video audio converted to text.";
+
+
+            const transcriptBox =
+                document.getElementById(
+                    "videoTranscript"
+                );
+
+
+            transcriptBox.style.display =
+                "block";
+
+
+            transcriptBox.innerHTML =
+
+                "<strong>Detected English text:</strong><br><br>" +
+
+                escapeHtml(
+                    transcript
+                );
+
+
+            const preview =
+                document.getElementById(
+                    "videoPreview"
+                );
+
+
+            const url =
+                URL.createObjectURL(
+                    file
+                );
+
+
+            preview.innerHTML =
+
+                `
+                <video
+                    controls
+                    src="${url}"
+                ></video>
+                `;
+
+        }
+
+
+        mainStatus.textContent =
+            "✅ Text extracted successfully. Click ANALYZE REVIEW.";
+
+
+        /* Automatically switch to text */
+
+        showPanel(
+            "text"
+        );
+
+    }
+    catch (error) {
+
+
+        console.error(
+            "Transcription error:",
+            error
+        );
+
+
+        mainStatus.textContent =
+            "❌ Transcription failed.";
+
+
+        alert(
+
+            "Could not convert the speech to text.\n\n" +
+            error.message
+
+        );
+
+    }
+
+}
+
+
+
+/* =========================================================
+   SENTIMENT ANALYSIS
+   ========================================================= */
+
+async function analyzeReview() {
+
+
+    const text =
+        reviewInput.value.trim();
+
+
+    if (!text) {
+
+        alert(
+            "Please enter, record, or upload a review first."
+        );
+
+        return;
+
+    }
+
+
+    analyzeButton.disabled =
+        true;
+
+
+    analyzeButton.textContent =
+        "⏳ ANALYZING...";
+
+
+    mainStatus.textContent =
+        "⏳ Sending review to your trained model...";
+
+
+    try {
+
+
+        const response =
+            await fetch(
+
+                BACKEND_URL +
+                "/predict",
+
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body: JSON.stringify({
+
+                        text: text
+
+                    })
+
+                }
+
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+
+                data.error ||
+                "Prediction failed."
+
+            );
+
+        }
+
+
+        /* =================================================
+           RESULT
+           ================================================= */
+
+        const sentiment =
+            data.sentiment;
+
+
+        const prediction =
+            data.prediction;
+
+
+        /* =================================================
+           UPDATE TEXT
+           ================================================= */
+
+        const sentimentText =
+            document.getElementById(
+                "sentimentText"
+            );
+
+
+        sentimentText.textContent =
+            sentiment;
+
+
+        /* =================================================
+           EMOJI + COLOR
+           ================================================= */
+
+        const emoji =
+            document.getElementById(
+                "resultEmoji"
+            );
+
+
+        sentimentText.classList.remove(
+
+            "positive",
+
+            "negative",
+
+            "neutral"
+
+        );
+
+
+        if (
+            sentiment ===
+            "Positive"
+        ) {
+
+            emoji.textContent =
+                "😊";
+
+            sentimentText.classList.add(
+                "positive"
+            );
+
+        }
+
+        else if (
+            sentiment ===
+            "Negative"
+        ) {
+
+            emoji.textContent =
+                "😞";
+
+            sentimentText.classList.add(
+                "negative"
+            );
+
+        }
+
+        else if (
+            sentiment ===
+            "Neutral"
+        ) {
+
+            emoji.textContent =
+                "😐";
+
+            sentimentText.classList.add(
+                "neutral"
+            );
+
+        }
+
+        else {
+
+            emoji.textContent =
+                "🎭";
+
+        }
+
+
+        /* =================================================
+           CONFIDENCE
+           ================================================= */
+
+        const confidenceText =
+            document.getElementById(
+                "confidenceText"
+            );
+
+
+        if (
+            data.confidence !== null &&
+            data.confidence !== undefined
+        ) {
+
+            confidenceText.textContent =
+
+                Math.round(
+                    data.confidence * 100
+                ) +
+
+                "% relative model score";
+
+        }
+
+        else {
+
+            confidenceText.textContent =
+                "Model prediction completed";
+
+        }
+
+
+        /* =================================================
+           PREDICTION
+           ================================================= */
+
+        document.getElementById(
+            "predictionValue"
+        ).textContent =
+            prediction;
+
+
+        /* =================================================
+           KEYWORDS
+           ================================================= */
+
+        generateKeywords(
+            text
+        );
+
+
+        /* =================================================
+           STATUS
+           ================================================= */
+
+        mainStatus.textContent =
+            "✅ Analysis completed using your trained sentiment model.";
+
+
+        console.log(
+            "Prediction:",
+            data
+        );
+
+    }
+    catch (error) {
+
+
+        console.error(
+            error
+        );
+
+
+        mainStatus.textContent =
+            "❌ Sentiment analysis failed.";
+
+
+        alert(
+
+            "Could not analyze the review.\n\n" +
+            error.message +
+            "\n\nMake sure app.py is running."
+
+        );
+
+    }
+    finally {
+
+
+        analyzeButton.disabled =
+            false;
+
+
+        analyzeButton.textContent =
+            "🔍 ANALYZE REVIEW";
+
+    }
+
+}
+
+
+
+/* =========================================================
+   KEYWORD GENERATOR
+   ========================================================= */
+
+function generateKeywords(
+    text
+) {
+
+
+    const container =
+        document.getElementById(
+            "keywordList"
+        );
+
+
+    const stopWords =
+        new Set([
+
+            "this",
+            "that",
+            "with",
+            "from",
+            "have",
+            "has",
+            "had",
+            "were",
+            "was",
+            "the",
+            "and",
+            "for",
+            "are",
+            "you",
+            "your",
+            "they",
+            "their",
+            "about",
+            "movie",
+            "film",
+            "very",
+            "really",
+            "just",
+            "into",
+            "would",
+            "could",
+            "there",
+            "what",
+            "when",
+            "where",
+            "which",
+            "will",
+            "been",
+            "being",
+            "this",
+            "these",
+            "those",
+            "not",
+            "but",
+            "its",
+            "it's",
+            "than",
+            "then",
+            "them",
+            "some",
+            "such",
+            "also",
+            "only",
+            "more",
+            "most",
+            "much",
+            "many",
+            "movie",
+            "movies"
+
+        ]);
+
+
+    const words = text
+
+        .toLowerCase()
+
+        .replace(
+            /[^a-z\s]/g,
+            " "
+        )
+
+        .split(
+            /\s+/
+        )
+
+        .filter(
+            function (word) {
+
+                return (
+
+                    word.length >= 4 &&
+
+                    !stopWords.has(
+                        word
+                    )
+
+                );
+
+            }
+        );
+
+
+    const unique =
+        [
+            ...new Set(words)
+        ].slice(
+            0,
+            8
+        );
+
+
+    container.innerHTML =
+        "";
+
+
+    if (
+        unique.length === 0
+    ) {
+
+        container.innerHTML =
+
+            `<span class="keyword">
+                No keywords
+            </span>`;
+
+        return;
+
+    }
+
+
+    unique.forEach(
+        function (word) {
+
+            const span =
+                document.createElement(
+                    "span"
+                );
+
+
+            span.className =
+                "keyword";
+
+
+            span.textContent =
+                word;
+
+
+            container.appendChild(
+                span
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =========================================================
+   ESCAPE HTML
+   ========================================================= */
+
+function escapeHtml(
+    text
+) {
+
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+
+    div.textContent =
+        text;
+
+
+    return div.innerHTML;
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>

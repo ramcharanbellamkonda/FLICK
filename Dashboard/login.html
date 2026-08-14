@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Flick | Sign In</title>
+
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+
+<body>
+
+    <main class="auth-page">
+
+        <!-- Left cinematic section -->
+        <section class="visual-section">
+
+            <div class="visual-overlay"></div>
+
+            <header class="brand">
+                <div class="brand-icon">▶</div>
+                <span>FLICK</span>
+            </header>
+
+            <div class="visual-content">
+
+                <p class="eyebrow">AI • MOVIES • INSIGHTS</p>
+
+                <h1>
+                    Understand the
+                    <span>emotion</span>
+                    behind every review.
+                </h1>
+
+                <p class="visual-description">
+                    Discover what audiences really think.
+                    Analyze movie reviews with intelligent
+                    sentiment analysis.
+                </p>
+
+                <div class="feature-row">
+
+                    <div class="feature-item">
+                        <div class="feature-icon">✦</div>
+                        <div>
+                            <strong>Smart Analysis</strong>
+                            <small>AI-powered review insights</small>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">◉</div>
+                        <div>
+                            <strong>Detailed Sentiment</strong>
+                            <small>Positive, negative & neutral</small>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="visual-footer">
+                Flick · Intelligent Movie Review Analysis
+            </div>
+
+        </section>
+
+
+        <!-- Login section -->
+        <section class="form-section">
+
+            <div class="auth-wrapper">
+
+                <div class="mobile-brand">
+                    <div class="brand-icon">▶</div>
+                    <span>FLICK</span>
+                </div>
+
+                <div class="form-header">
+
+                    <p class="welcome-label">WELCOME BACK</p>
+
+                    <h2>Sign in to your account</h2>
+
+                    <p>
+                        Continue exploring movie insights.
+                    </p>
+
+                </div>
+
+
+                <form id="loginForm" novalidate>
+
+                    <div class="field">
+
+                        <label for="loginEmail">
+                            Email address
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-symbol">@</span>
+
+                            <input
+                                type="email"
+                                id="loginEmail"
+                                placeholder="name@example.com"
+                                autocomplete="email"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <div class="label-row">
+
+                            <label for="loginPassword">
+                                Password
+                            </label>
+
+                            <a href="#" id="forgotPassword">
+                                Forgot password?
+                            </a>
+
+                        </div>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-symbol">●</span>
+
+                            <input
+                                type="password"
+                                id="loginPassword"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                            >
+
+                            <button
+                                type="button"
+                                class="eye-button"
+                                id="loginEye"
+                                aria-label="Show password"
+                            >
+                                ◉
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="remember-row">
+
+                        <label class="checkbox-label">
+
+                            <input
+                                type="checkbox"
+                                id="rememberMe"
+                            >
+
+                            <span class="custom-checkbox"></span>
+
+                            <span>Remember me</span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div
+                        id="loginMessage"
+                        class="message"
+                    ></div>
+
+
+                    <button
+                        type="submit"
+                        class="main-button"
+                    >
+                        <span>Sign in</span>
+                        <span class="button-arrow">→</span>
+                    </button>
+
+                </form>
+
+
+                <div class="account-switch">
+
+                    <span>Don't have an account?</span>
+
+                    <a href="signup.html">
+                        Create an account
+                    </a>
+
+                </div>
+
+
+                <p class="legal-text">
+                    By continuing, you agree to Flick's
+                    Terms of Service and Privacy Policy.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="js/login.js"></script>
+
+</body>
+</html>
