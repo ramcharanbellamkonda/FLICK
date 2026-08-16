@@ -6,3 +6,5 @@ async function loadComponent(id, file) {
 
 loadComponent("header", "header.html");
 loadComponent("footer", "footer.html");
+loadComponent("cube", "cube.html");
+loadComponent("flow", "flow.html");
