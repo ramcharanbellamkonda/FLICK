@@ -1121,25 +1121,9 @@ if not os.path.exists(
 # LOAD WHISPER
 # =========================================================
 
-print(
-    "======================================"
-)
-
-print(
-    "Loading Whisper model..."
-)
-
-print(
-    "======================================"
-)
-
 
 whisper_model = None
 
-
-print(
-    "Whisper model loaded successfully!"
-)
 
 
 # =========================================================
