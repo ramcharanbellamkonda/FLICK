@@ -2035,8 +2035,41 @@ async function loadSelectedMovie() {
                     );
 
 
-                const data =
-                    await response.json();
+                const responseText =
+    await response.text();
+
+console.log(
+    "Transcribe status:",
+    response.status
+);
+
+console.log(
+    "Transcribe response:",
+    responseText
+);
+
+let data;
+
+try {
+
+    data = JSON.parse(
+        responseText
+    );
+
+} catch (error) {
+
+    throw new Error(
+        "Server returned non-JSON response. " +
+        "Status: " +
+        response.status +
+        " Response: " +
+        responseText.substring(
+            0,
+            200
+        )
+    );
+
+}
 
 
                 if (
