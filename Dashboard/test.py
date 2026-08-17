@@ -1,64 +1,35 @@
-import pickle
+import joblib
 
-MODEL_PATH = "models/sentiment/logistic_75k_calibrated.pkl"
-VECTORIZER_PATH = "models/sentiment/tfidf_75k_vectorizer.pkl"
+MODEL_PATH = "models/sentiment_model.pkl"
+VECTORIZER_PATH = "models/tfidf_vectorizer.pkl"
 
-with open(MODEL_PATH, "rb") as f:
-    model = pickle.load(f)
+print("Loading Logistic Regression model...")
 
-with open(VECTORIZER_PATH, "rb") as f:
-    vectorizer = pickle.load(f)
+model = joblib.load(MODEL_PATH)
+vectorizer = joblib.load(VECTORIZER_PATH)
 
+print("Model loaded successfully!")
+print("TF-IDF loaded successfully!")
 
-def predict_sentiment(review):
+reviews = [
+    "The movie was boring and completely disappointing.",
+    "The movie was okay, nothing particularly special.",
+    "The acting was amazing and the story was fantastic."
+]
 
-    review_tfidf = vectorizer.transform([review])
+for review in reviews:
 
-    prediction = model.predict(review_tfidf)[0]
+    X = vectorizer.transform([review])
 
-    probabilities = model.predict_proba(review_tfidf)[0]
+    prediction = model.predict(X)[0]
 
-    classes = model.classes_
+    # Model already returns:
+    # negative / neutral / positive
+    sentiment = str(prediction).capitalize()
 
-    probability_dict = {
-        class_name: float(probability)
-        for class_name, probability in zip(classes, probabilities)
-    }
+    print()
+    print("Review:", review)
+    print("Sentiment:", sentiment)
 
-    confidence = max(probability_dict.values())
-
-    return {
-        "sentiment": prediction,
-        "confidence": round(confidence * 100, 2),
-        "probabilities": {
-            "negative": round(
-                probability_dict.get("negative", 0) * 100, 2
-            ),
-            "neutral": round(
-                probability_dict.get("neutral", 0) * 100, 2
-            ),
-            "positive": round(
-                probability_dict.get("positive", 0) * 100, 2
-            )
-        }
-    }
-
-
-while True:
-
-    review = input("\nEnter review (or type exit): ")
-
-    if review.lower() == "exit":
-        break
-
-    result = predict_sentiment(review)
-
-    print("\n-----------------------------")
-    print("Sentiment :", result["sentiment"])
-    print("Confidence:", result["confidence"], "%")
-
-    print("\nProbabilities:")
-    print("Positive:", result["probabilities"]["positive"], "%")
-    print("Neutral :", result["probabilities"]["neutral"], "%")
-    print("Negative:", result["probabilities"]["negative"], "%")
-    print("-----------------------------")
+print()
+print("All model tests completed successfully!")
