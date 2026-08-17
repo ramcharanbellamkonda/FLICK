@@ -1046,7 +1046,7 @@ def signup_page():
 
 FFMPEG = shutil.which("ffmpeg")
 
-WHISPER_MODEL_NAME = "base"
+WHISPER_MODEL_NAME = "tiny"
 
 
 # =========================================================
