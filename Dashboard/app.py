@@ -9,6 +9,7 @@ from datetime import datetime
 import requests
 import whisper
 import subprocess
+import shutil
 import os
 import tempfile
 import uuid
@@ -1043,7 +1044,7 @@ def signup_page():
 # SETTINGS
 # =========================================================
 
-FFMPEG = r"C:\Users\ramch\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg.Shared_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-9.0.1-full_build-shared\bin\ffmpeg.exe"
+FFMPEG = shutil.which("ffmpeg")
 
 WHISPER_MODEL_NAME = "base"
 
