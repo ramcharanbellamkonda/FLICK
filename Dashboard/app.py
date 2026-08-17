@@ -1133,9 +1133,7 @@ print(
 )
 
 
-whisper_model = whisper.load_model(
-    WHISPER_MODEL_NAME
-)
+whisper_model = None
 
 
 print(
@@ -1537,17 +1535,26 @@ def convert_to_wav(
 # =========================================================
 # WHISPER TRANSCRIPTION
 # =========================================================
+def transcribe(wav_file):
 
-def transcribe(
-    wav_file
-):
-
+    global whisper_model
 
     print()
-    print(
-        "Transcribing English speech..."
-    )
+    print("Transcribing English speech...")
 
+    # Load Whisper only when transcription is actually requested
+    if whisper_model is None:
+
+        print()
+        print("Loading Whisper model...")
+
+        whisper_model = whisper.load_model(
+            WHISPER_MODEL_NAME
+        )
+
+        print(
+            "Whisper model loaded successfully!"
+        )
 
     result = whisper_model.transcribe(
 
@@ -1565,37 +1572,23 @@ def transcribe(
 
     )
 
-
     text = result.get(
         "text",
         ""
     ).strip()
 
-
     if not text:
 
         raise Exception(
-
-            "No English speech "
-            "could be detected."
-
+            "No English speech could be detected."
         )
 
-
     print()
-    print(
-        "Transcript:"
-    )
-
-    print(
-        text
-    )
-
+    print("Transcript:")
+    print(text)
     print()
-
 
     return text
-
 
 # =========================================================
 # AUDIO / VIDEO → TEXT
