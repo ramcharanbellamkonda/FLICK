@@ -1,6 +1,12 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, session
 from flask_cors import CORS
 
+from pymongo import MongoClient
+from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import load_dotenv
+from pathlib import Path
+from datetime import datetime
+import requests
 import whisper
 import subprocess
 import os
@@ -9,32 +15,1035 @@ import uuid
 import joblib
 import numpy as np
 
+# =========================================================
+# ENVIRONMENT
+# =========================================================
+
+BASE_DIR = Path(__file__).resolve().parent
+
+ENV_FILE = BASE_DIR / ".env"
+
+load_dotenv(ENV_FILE)
+
+MONGO_URI = os.getenv("MONGO_URI")
+SECRET_KEY = os.getenv("SECRET_KEY")
+TMDB_API_KEY = os.getenv("TMDB_API_KEY")
 
 # =========================================================
-# FLASK
+# FLASK CONFIGURATION
 # =========================================================
 
 app = Flask(__name__)
 
-CORS(app)
+app.secret_key = SECRET_KEY
 
-
-# =========================================================
-# BASE DIRECTORY
-# =========================================================
-
-# This automatically finds the folder containing app.py
-
-BASE_DIR = os.path.dirname(
-    os.path.abspath(__file__)
+CORS(
+    app,
+    supports_credentials=True
 )
 
 
 # =========================================================
+# MONGODB
+# =========================================================
+
+client = None
+db = None
+users_collection = None
+history_collection = None
+
+
+try:
+
+    if not MONGO_URI:
+        raise ValueError(
+            "MONGO_URI is missing from .env"
+        )
+
+    client = MongoClient(
+        MONGO_URI,
+        serverSelectionTimeoutMS=5000
+    )
+
+    client.admin.command("ping")
+
+    print("MongoDB connected successfully!")
+
+    db = client["flick_database"]
+
+    users_collection = db["users"]
+
+    history_collection = db["history"]
+
+
+except Exception as e:
+
+    print("MongoDB connection failed:")
+    print(e)
+# =========================================================
+# AUTHENTICATION
+# =========================================================
+
+@app.route("/api/signup", methods=["POST"])
+def signup():
+
+    try:
+
+        if users_collection is None:
+
+            return jsonify({
+                "success": False,
+                "message": "Database connection is not available."
+            }), 500
+
+
+        data = request.get_json(silent=True) or {}
+
+
+        name = str(
+            data.get("name", "")
+        ).strip()
+
+
+        email = str(
+            data.get("email", "")
+        ).strip().lower()
+
+
+        password = str(
+            data.get("password", "")
+        )
+
+
+        # -------------------------------------------------
+        # VALIDATION
+        # -------------------------------------------------
+
+        if not name:
+
+            return jsonify({
+                "success": False,
+                "message": "Full name is required."
+            }), 400
+
+
+        if not email:
+
+            return jsonify({
+                "success": False,
+                "message": "Email address is required."
+            }), 400
+
+
+        if not password:
+
+            return jsonify({
+                "success": False,
+                "message": "Password is required."
+            }), 400
+
+
+        if len(password) < 8:
+
+            return jsonify({
+                "success": False,
+                "message":
+                    "Password must contain at least 8 characters."
+            }), 400
+
+
+        # -------------------------------------------------
+        # CHECK EXISTING USER
+        # -------------------------------------------------
+
+        existing_user = users_collection.find_one({
+            "email": email
+        })
+
+
+        if existing_user:
+
+            return jsonify({
+                "success": False,
+                "message":
+                    "An account with this email already exists."
+            }), 409
+
+
+        # -------------------------------------------------
+        # HASH PASSWORD
+        # -------------------------------------------------
+
+        hashed_password = generate_password_hash(
+            password
+        )
+
+
+        # -------------------------------------------------
+        # CREATE USER
+        # -------------------------------------------------
+
+        new_user = {
+            "name": name,
+            "email": email,
+            "password": hashed_password
+        }
+
+
+        users_collection.insert_one(
+            new_user
+        )
+
+
+        return jsonify({
+            "success": True,
+            "message":
+                "Account created successfully."
+        }), 201
+
+
+    except Exception as e:
+
+        print("Signup error:")
+        print(e)
+
+
+        return jsonify({
+            "success": False,
+            "message":
+                "Server error. Please try again."
+        }), 500
+
+
+# =========================================================
+# LOGIN
+# =========================================================
+
+@app.route("/api/login", methods=["POST"])
+def login():
+
+    try:
+
+        if users_collection is None:
+
+            return jsonify({
+                "success": False,
+                "message":
+                    "Database connection is not available."
+            }), 500
+
+
+        data = request.get_json(silent=True) or {}
+
+
+        email = str(
+            data.get("email", "")
+        ).strip().lower()
+
+
+        password = str(
+            data.get("password", "")
+        )
+
+
+        if not email or not password:
+
+            return jsonify({
+                "success": False,
+                "message":
+                    "Email and password are required."
+            }), 400
+
+
+        user = users_collection.find_one({
+            "email": email
+        })
+
+
+        if user is None:
+
+            return jsonify({
+                "success": False,
+                "message":
+                    "Invalid email or password."
+            }), 401
+
+
+        password_correct = check_password_hash(
+            user["password"],
+            password
+        )
+
+
+        if not password_correct:
+
+            return jsonify({
+                "success": False,
+                "message":
+                    "Invalid email or password."
+            }), 401
+
+
+        # -------------------------------------------------
+        # SESSION
+        # -------------------------------------------------
+
+        session["user_id"] = str(
+            user["_id"]
+        )
+
+        session["user_name"] = user["name"]
+
+        session["user_email"] = user["email"]
+
+
+        return jsonify({
+
+            "success": True,
+
+            "message":
+                "Login successful.",
+
+            "user": {
+
+                "name":
+                    user["name"],
+
+                "email":
+                    user["email"]
+
+            }
+
+        }), 200
+
+
+    except Exception as e:
+
+        print("Login error:")
+        print(e)
+
+
+        return jsonify({
+            "success": False,
+            "message":
+                "Server error. Please try again."
+        }), 500
+    # =========================================================
+# CHECK CURRENT USER
+# =========================================================
+
+@app.route("/api/me", methods=["GET"])
+def current_user():
+
+    if "user_id" not in session:
+
+        return jsonify({
+            "loggedIn": False
+        }), 401
+
+
+    return jsonify({
+
+        "loggedIn": True,
+
+        "user": {
+
+            "name":
+                session.get("user_name", ""),
+
+            "email":
+                session.get("user_email", "")
+
+        }
+
+    }), 200
+
+
+# =========================================================
+# LOGOUT
+# =========================================================
+
+@app.route("/api/logout", methods=["POST"])
+def logout():
+
+    session.clear()
+
+    return jsonify({
+
+        "success": True,
+
+        "message":
+            "Logged out successfully."
+
+    }), 200
+# =========================================================
+# USER HISTORY
+# =========================================================
+
+@app.route("/api/history", methods=["GET", "POST"])
+def history():
+
+    # -----------------------------------------------------
+    # CHECK LOGIN
+    # -----------------------------------------------------
+
+    if "user_id" not in session:
+
+        return jsonify({
+            "success": False,
+            "message": "Please login first."
+        }), 401
+
+
+    # =====================================================
+    # SAVE REVIEW
+    # =====================================================
+
+    if request.method == "POST":
+
+        try:
+
+            data = request.get_json(
+                silent=True
+            ) or {}
+
+
+            review = str(
+                data.get("review", "")
+            ).strip()
+
+
+            sentiment = str(
+                data.get("sentiment", "")
+            ).strip()
+
+
+            confidence = data.get(
+                "confidence",
+                None
+            )
+
+
+            prediction = str(
+                data.get("prediction", sentiment)
+            ).strip()
+
+            movie_id = data.get("movie_id")
+
+            movie_title = str(
+                data.get("movie_title", "")
+            ).strip()
+
+            movie_poster = str(
+                data.get("movie_poster", "")
+            ).strip()
+
+
+            # -------------------------------------------------
+            # VALIDATION
+            # -------------------------------------------------
+
+            if not review:
+
+                return jsonify({
+                    "success": False,
+                    "message": "Review is empty."
+                }), 400
+
+
+            if not sentiment:
+
+                return jsonify({
+                    "success": False,
+                    "message": "Sentiment is missing."
+                }), 400
+
+
+            # -------------------------------------------------
+            # CREATE HISTORY RECORD
+            # -------------------------------------------------
+
+            history_record = {
+
+                "user_id":
+                    session["user_id"],
+
+                "user_email":
+                    session["user_email"],
+
+                "review":
+                    review,
+
+                "sentiment":
+                    sentiment,
+
+                "prediction":
+                    prediction,
+
+                "confidence":
+                    confidence,
+
+                "movie_id":
+                    movie_id,
+
+                "movie_title":
+                    movie_title,
+
+                "movie_poster":
+                    movie_poster,
+
+                "created_at":
+                    datetime.utcnow()
+
+            }
+
+
+            # -------------------------------------------------
+            # SAVE TO MONGODB
+            # -------------------------------------------------
+
+            history_collection.insert_one(
+                history_record
+            )
+
+
+            return jsonify({
+
+                "success": True,
+
+                "message":
+                    "Review saved to history."
+
+            }), 201
+
+
+        except Exception as e:
+
+            print(
+                "History save error:"
+            )
+
+            print(e)
+
+
+            return jsonify({
+
+                "success": False,
+
+                "message":
+                    "Could not save review history."
+
+            }), 500
+
+
+    # =====================================================
+    # GET USER HISTORY
+    # =====================================================
+
+    try:
+
+        records = history_collection.find(
+            {
+                "user_id":
+                    session["user_id"]
+            }
+        ).sort(
+            "created_at",
+            -1
+        )
+
+
+        history_data = []
+
+
+        for record in records:
+
+            history_data.append({
+
+                "id":
+                    str(record["_id"]),
+
+                "review":
+                    record.get(
+                        "review",
+                        ""
+                    ),
+
+                "sentiment":
+                    record.get(
+                        "sentiment",
+                        ""
+                    ),
+
+                "prediction":
+                    record.get(
+                        "prediction",
+                        ""
+                    ),
+
+                "confidence":
+                    record.get(
+                        "confidence",
+                        None
+                    ),
+
+                "movie_id":
+                    record.get(
+                        "movie_id",
+                        None
+                    ),
+
+                "movie_title":
+                    record.get(
+                        "movie_title",
+                        ""
+                    ),
+
+                "movie_poster":
+                    record.get(
+                        "movie_poster",
+                        ""
+                    ),
+
+                "created_at":
+                    record.get(
+                        "created_at"
+                    ).isoformat()
+                    if record.get(
+                        "created_at"
+                    )
+                    else None
+
+            })
+
+
+        return jsonify({
+
+            "success": True,
+
+            "history":
+                history_data
+
+        }), 200
+
+
+    except Exception as e:
+
+        print(
+            "History fetch error:"
+        )
+
+        print(e)
+
+
+        return jsonify({
+
+            "success": False,
+
+            "message":
+                "Could not load history."
+
+        }), 500
+    # =========================================================
+# DELETE ONE HISTORY ITEM
+# =========================================================
+
+@app.route("/api/history/<history_id>", methods=["DELETE"])
+def delete_history(history_id):
+
+    if "user_id" not in session:
+        return jsonify({
+            "success": False,
+            "message": "Please login first."
+        }), 401
+
+    try:
+
+        from bson import ObjectId
+
+        result = history_collection.delete_one({
+            "_id": ObjectId(history_id),
+            "user_id": session["user_id"]
+        })
+
+        if result.deleted_count == 0:
+
+            return jsonify({
+                "success": False,
+                "message": "History item not found."
+            }), 404
+
+        return jsonify({
+            "success": True,
+            "message": "History item deleted."
+        }), 200
+
+    except Exception as e:
+
+        print("Delete history error:")
+        print(e)
+
+        return jsonify({
+            "success": False,
+            "message": "Could not delete history item."
+        }), 500
+
+
+# =========================================================
+# CLEAR ALL USER HISTORY
+# =========================================================
+
+@app.route("/api/history/clear", methods=["DELETE"])
+def clear_history():
+
+    if "user_id" not in session:
+        return jsonify({
+            "success": False,
+            "message": "Please login first."
+        }), 401
+
+    try:
+
+        result = history_collection.delete_many({
+            "user_id": session["user_id"]
+        })
+
+        return jsonify({
+            "success": True,
+            "message": "All history cleared.",
+            "deleted": result.deleted_count
+        }), 200
+
+    except Exception as e:
+
+        print("Clear history error:")
+        print(e)
+
+        return jsonify({
+            "success": False,
+            "message": "Could not clear history."
+        }), 500
+
+# =========================================================
+# TMDB CONFIGURATION
+# =========================================================
+
+TMDB_BASE_URL = "https://api.themoviedb.org/3"
+
+
+# =========================================================
+# GET POPULAR MOVIES
+# =========================================================
+
+@app.route("/api/movies", methods=["GET"])
+def get_movies():
+
+    if not TMDB_API_KEY:
+
+        return jsonify({
+            "success": False,
+            "message": "TMDB API key is not configured."
+        }), 500
+
+
+    try:
+
+        page = request.args.get(
+            "page",
+            1,
+            type=int
+        )
+
+
+        response = requests.get(
+
+            f"{TMDB_BASE_URL}/movie/popular",
+
+            params={
+                "api_key": TMDB_API_KEY,
+                "language": "en-US",
+                "page": page
+            },
+
+            timeout=10
+
+        )
+
+
+        if not response.ok:
+
+            return jsonify({
+                "success": False,
+                "message": "TMDB request failed."
+            }), response.status_code
+
+
+        data = response.json()
+
+
+        return jsonify({
+
+            "success": True,
+
+            "page":
+                data.get("page", 1),
+
+            "total_pages":
+                data.get("total_pages", 1),
+
+            "movies":
+                data.get("results", [])
+
+        }), 200
+
+
+    except requests.RequestException as e:
+
+        print("TMDB request error:")
+        print(e)
+
+        return jsonify({
+
+            "success": False,
+
+            "message":
+                "Could not connect to TMDB."
+
+        }), 502
+
+
+# =========================================================
+# SEARCH MOVIES
+# =========================================================
+
+@app.route("/api/movies/search", methods=["GET"])
+def search_movies():
+
+    if not TMDB_API_KEY:
+
+        return jsonify({
+            "success": False,
+            "message": "TMDB API key is not configured."
+        }), 500
+
+
+    query = request.args.get(
+        "query",
+        ""
+    ).strip()
+
+
+    if not query:
+
+        return jsonify({
+
+            "success": False,
+
+            "message":
+                "Search query is required."
+
+        }), 400
+
+
+    try:
+
+        response = requests.get(
+
+            f"{TMDB_BASE_URL}/search/movie",
+
+            params={
+
+                "api_key":
+                    TMDB_API_KEY,
+
+                "language":
+                    "en-US",
+
+                "query":
+                    query,
+
+                "include_adult":
+                    "false",
+
+                "page":
+                    1
+
+            },
+
+            timeout=10
+
+        )
+
+
+        if not response.ok:
+
+            return jsonify({
+
+                "success": False,
+
+                "message":
+                    "TMDB search failed."
+
+            }), response.status_code
+
+
+        data =response.json()
+
+
+        return jsonify({
+
+            "success": True,
+
+            "movies":
+                data.get(
+                    "results",
+                    []
+                )
+
+        }), 200
+
+
+    except requests.RequestException as e:
+
+        print(
+            "TMDB search error:"
+        )
+
+        print(e)
+
+
+        return jsonify({
+
+            "success": False,
+
+            "message":
+                "Could not connect to TMDB."
+
+        }), 502
+
+
+# =========================================================
+# GET MOVIE DETAILS
+# =========================================================
+
+@app.route(
+    "/api/movies/<int:movie_id>",
+    methods=["GET"]
+)
+def get_movie_details(movie_id):
+
+    if not TMDB_API_KEY:
+
+        return jsonify({
+
+            "success": False,
+
+            "message":
+                "TMDB API key is not configured."
+
+        }), 500
+
+
+    try:
+
+        response = requests.get(
+
+            f"{TMDB_BASE_URL}/movie/{movie_id}",
+
+            params={
+
+                "api_key":
+                    TMDB_API_KEY,
+
+                "language":
+                    "en-US"
+
+            },
+
+            timeout=10
+
+        )
+
+
+        if response.status_code == 404:
+
+            return jsonify({
+
+                "success": False,
+
+                "message":
+                    "Movie not found."
+
+            }), 404
+
+
+        if not response.ok:
+
+            return jsonify({
+
+                "success": False,
+
+                "message":
+                    "TMDB request failed."
+
+            }), response.status_code
+
+
+        movie =response.json()
+
+
+        return jsonify({
+
+            "success": True,
+
+            "movie":
+                movie
+
+        }), 200
+
+
+    except requests.RequestException as e:
+
+        print(
+            "TMDB details error:"
+        )
+
+        print(e)
+
+
+        return jsonify({
+
+            "success": False,
+
+            "message":
+                "Could not connect to TMDB."
+
+        }), 502
+# =========================================================
+# AUTH PAGES
+# =========================================================
+
+@app.route("/login.html", methods=["GET"])
+def login_page():
+
+    return send_from_directory(
+        BASE_DIR,
+        "login.html"
+    )
+
+
+@app.route("/signup.html", methods=["GET"])
+def signup_page():
+
+    return send_from_directory(
+        BASE_DIR,
+        "signup.html"
+    )
+# =========================================================
 # SETTINGS
 # =========================================================
 
-FFMPEG = r"C:\Users\sruja\Downloads\ffmpeg-9.0.1-essentials_build\ffmpeg-9.0.1-essentials_build\bin\ffmpeg.exe"
+FFMPEG = r"C:\Users\ramch\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg.Shared_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-9.0.1-full_build-shared\bin\ffmpeg.exe"
 
 WHISPER_MODEL_NAME = "base"
 
@@ -52,16 +1061,28 @@ ANALYSIS_HTML = os.path.join(
 # =========================================================
 # MODEL DIRECTORY
 # =========================================================
+#
+# Put these TWO trained files in:
+#
+#   Dashboard/
+#       app.py
+#       models/
+#           tfidf_vectorizer.pkl
+#           sentiment_model.pkl
+#
+# sentiment_model.pkl = your FIRST uploaded calibrated
+#                       Logistic Regression model
+# tfidf_vectorizer.pkl = your uploaded TF-IDF vectorizer
+#
+# The model and vectorizer MUST be the matching pair used
+# during training.
+# =========================================================
 
 MODEL_DIR = os.path.join(
     BASE_DIR,
     "models"
 )
 
-
-# =========================================================
-# TRAINED MODEL PATHS
-# =========================================================
 
 TFIDF_PATH = os.path.join(
     MODEL_DIR,
@@ -229,22 +1250,38 @@ except Exception:
 # =========================================================
 # SENTIMENT LABELS
 # =========================================================
-
-# Your trained model uses:
 #
-# 0 = Negative
-# 1 = Neutral
-# 2 = Positive
+# Prefer the labels stored inside the trained model.
+# This is important because a calibrated Logistic Regression
+# model may store string classes such as:
+#
+#   ['negative', 'neutral', 'positive']
+#
+# rather than integer labels 0, 1, 2.
+# =========================================================
 
-LABELS = {
+def normalize_sentiment_label(label):
 
-    0: "Negative",
+    value = str(label).strip().lower()
 
-    1: "Neutral",
+    if value in ("positive", "pos", "2"):
+        return "Positive"
 
-    2: "Positive"
+    if value in ("negative", "neg", "0"):
+        return "Negative"
 
-}
+    if value in ("neutral", "neu", "1"):
+        return "Neutral"
+
+    return str(label).strip().capitalize()
+
+
+def get_model_classes():
+
+    if hasattr(sentiment_model, "classes_"):
+        return list(sentiment_model.classes_)
+
+    return []
 
 
 # =========================================================
@@ -286,19 +1323,28 @@ else:
 # Flask will now open analysis.html
 # instead of returning JSON.
 
+# =========================================================
+# ROUTE: HOME
+# =========================================================
+
 @app.route(
     "/",
     methods=["GET"]
 )
-
 def home():
 
+    # User is NOT logged in
+    if "user_id" not in session:
+
+        return send_from_directory(
+            BASE_DIR,
+            "login.html"
+        )
+
+    # User IS logged in
     return send_from_directory(
-
         BASE_DIR,
-
-        "analysis.html"
-
+        "index.html"
     )
 
 
@@ -324,6 +1370,7 @@ def analysis_page():
         "analysis.html"
 
     )
+
 
 
 # =========================================================
@@ -802,317 +1849,231 @@ def transcribe_file():
     "/predict",
     methods=["POST"]
 )
-
 def predict():
-
 
     try:
 
-
-        # -------------------------------------------------
-        # GET JSON
-        # -------------------------------------------------
-
-        data = request.get_json(
-            silent=True
-        )
-
-
-        if not data:
-
-            return jsonify({
-
-                "success": False,
-
-                "error":
-                    "No review data was received."
-
-            }), 400
-
-
-        # -------------------------------------------------
-        # GET TEXT
-        # -------------------------------------------------
+        data = request.get_json(silent=True) or {}
 
         text = data.get(
             "text",
-            ""
+            data.get("review", "")
         )
 
-
-        if not isinstance(
-            text,
-            str
-        ):
-
-            text = str(
-                text
-            )
-
-
-        text = text.strip()
-
+        text = str(text).strip()
 
         if not text:
 
             return jsonify({
-
                 "success": False,
-
-                "error":
-                    "Review text is empty."
-
+                "error": "Review text is empty."
             }), 400
 
+        movie_id = data.get("movie_id")
+
+        movie_title = str(
+            data.get("movie_title", "")
+        ).strip()
+
+        movie_poster = str(
+            data.get("movie_poster", "")
+        ).strip()
 
         print()
-        print(
-            "======================================"
+        print("======================================")
+        print("SENTIMENT ANALYSIS")
+        print("======================================")
+        print("Review:")
+        print(text)
+        print("Movie:")
+        print(movie_title if movie_title else "No movie selected")
+
+        text_vector = tfidf_vectorizer.transform([text])
+
+        raw_prediction = sentiment_model.predict(
+            text_vector
+        )[0]
+
+        sentiment = normalize_sentiment_label(
+            raw_prediction
         )
-
-        print(
-            "SENTIMENT ANALYSIS"
-        )
-
-        print(
-            "======================================"
-        )
-
-        print(
-            "Review:"
-        )
-
-        print(
-            text
-        )
-
-
-        # -------------------------------------------------
-        # TF-IDF
-        # -------------------------------------------------
-
-        text_vector = (
-
-            tfidf_vectorizer.transform(
-
-                [text]
-
-            )
-
-        )
-
-
-        # -------------------------------------------------
-        # TRAINED MODEL
-        # -------------------------------------------------
-
-        prediction = (
-
-            sentiment_model.predict(
-
-                text_vector
-
-            )[0]
-
-        )
-
-
-        prediction = int(
-            prediction
-        )
-
-
-        # -------------------------------------------------
-        # LABEL
-        # -------------------------------------------------
-
-        sentiment = LABELS.get(
-
-            prediction,
-
-            "Unknown"
-
-        )
-
-
-        # -------------------------------------------------
-        # DECISION FUNCTION
-        # -------------------------------------------------
 
         confidence = None
 
-        decision_score = None
+        probabilities_output = {
+            "negative": 0.0,
+            "neutral": 0.0,
+            "positive": 0.0
+        }
 
+        if hasattr(sentiment_model, "predict_proba"):
 
-        if hasattr(
+            probabilities = sentiment_model.predict_proba(
+                text_vector
+            )[0]
 
-            sentiment_model,
+            classes = get_model_classes()
 
-            "decision_function"
+            for class_name, probability in zip(
+                classes,
+                probabilities
+            ):
 
+                normalized = normalize_sentiment_label(
+                    class_name
+                )
+
+                key = normalized.lower()
+
+                if key in probabilities_output:
+
+                    probabilities_output[key] = round(
+                        float(probability) * 100,
+                        2
+                    )
+
+            # Relative score = probability of the sentiment
+            # predicted by Logistic Regression.
+            predicted_key = sentiment.lower()
+            confidence = round(
+                float(
+                    probabilities_output.get(
+                        predicted_key,
+                        max(probabilities_output.values())
+                    )
+                ),
+                2
+            )
+
+        if confidence is None:
+
+            confidence = 0.0
+
+            if hasattr(sentiment_model, "decision_function"):
+
+                scores = np.asarray(
+                    sentiment_model.decision_function(
+                        text_vector
+                    )
+                )
+
+                if scores.ndim == 2:
+
+                    row = scores[0]
+                    shifted = row - np.max(row)
+                    exp_scores = np.exp(shifted)
+                    fallback_probs = (
+                        exp_scores / np.sum(exp_scores)
+                    )
+
+                    confidence = round(
+                        float(np.max(fallback_probs)) * 100,
+                        2
+                    )
+
+                else:
+
+                    confidence = round(
+                        float(
+                            1 / (
+                                1 + np.exp(
+                                    -abs(float(scores[0]))
+                                )
+                            )
+                        ) * 100,
+                        2
+                    )
+
+        history_saved = False
+
+        if (
+            "user_id" in session
+            and history_collection is not None
         ):
 
+            history_collection.insert_one({
 
-            scores = (
+                "user_id": session["user_id"],
 
-                sentiment_model
-                .decision_function(
-                    text_vector
-                )
+                "user_email": session.get(
+                    "user_email",
+                    ""
+                ),
 
+                "review": text,
+
+                "sentiment": sentiment,
+
+                "prediction": sentiment,
+
+                "confidence": confidence,
+
+                "probabilities": probabilities_output,
+
+                "movie_id": movie_id,
+
+                "movie_title": movie_title,
+
+                "movie_poster": movie_poster,
+
+                "created_at": datetime.utcnow()
+
+            })
+
+            history_saved = True
+
+            print("Review history saved.")
+
+        else:
+
+            print(
+                "Review history NOT saved - user is not logged in "
+                "or database connection is unavailable."
             )
 
-
-            scores = np.asarray(
-                scores
-            )
-
-
-            # -------------------------------------------------
-            # MULTI-CLASS
-            # -------------------------------------------------
-
-            if scores.ndim == 2:
-
-
-                row = scores[0]
-
-
-                decision_score = float(
-
-                    np.max(
-                        np.abs(row)
-                    )
-
-                )
-
-
-                # Relative score
-                # NOT a true probability
-
-                shifted = (
-
-                    row -
-
-                    np.max(row)
-
-                )
-
-
-                exp_scores = np.exp(
-                    shifted
-                )
-
-
-                probabilities = (
-
-                    exp_scores /
-
-                    np.sum(
-                        exp_scores
-                    )
-
-                )
-
-
-                confidence = float(
-
-                    np.max(
-                        probabilities
-                    )
-
-                )
-
-
-            # -------------------------------------------------
-            # BINARY
-            # -------------------------------------------------
-
-            else:
-
-
-                decision_score = float(
-
-                    scores[0]
-
-                )
-
-
-        # -------------------------------------------------
-        # RESULT
-        # -------------------------------------------------
-
+        print("Prediction:", sentiment)
+        print("Confidence:", confidence, "%")
+        print("Probabilities:", probabilities_output)
+        print("History saved:", history_saved)
+        print("======================================")
         print()
-        print(
-            "Prediction:",
-            prediction
-        )
-
-        print(
-            "Sentiment:",
-            sentiment
-        )
-
-        print(
-            "Confidence:",
-            confidence
-        )
-
-        print(
-            "======================================"
-        )
-
-        print()
-
-
-        # -------------------------------------------------
-        # SEND TO FRONTEND
-        # -------------------------------------------------
 
         return jsonify({
 
             "success": True,
 
-            "prediction":
-                prediction,
+            "prediction": sentiment,
 
-            "sentiment":
-                sentiment,
+            "sentiment": sentiment,
 
-            "confidence":
-                confidence,
+            "confidence": confidence,
 
-            "decision_score":
-                decision_score,
+            "relative_score": confidence,
 
-            "text":
-                text
+            "probabilities": probabilities_output,
+
+            "text": text,
+
+            "movie": {
+                "id": movie_id,
+                "title": movie_title,
+                "poster": movie_poster
+            },
+
+            "history_saved": history_saved
 
         })
 
-
     except Exception as e:
 
-
         print()
-        print(
-            "PREDICTION ERROR:"
-        )
-
-        print(
-            str(e)
-        )
-
+        print("PREDICTION ERROR:")
+        print(str(e))
         print()
-
 
         return jsonify({
-
             "success": False,
-
-            "error":
-                str(e)
-
+            "error": str(e)
         }), 500
 
 
@@ -1173,7 +2134,8 @@ if __name__ == "__main__":
     )
 
     print(
-        "======================================"
+        "================="
+        "====================="
     )
 
     print(
@@ -1186,6 +2148,11 @@ if __name__ == "__main__":
 
     print(
         "Sentiment     : READY"
+    )
+
+    print(
+        "Model classes  : "
+        + str(get_model_classes())
     )
 
     print(

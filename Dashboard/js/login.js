@@ -1,261 +1,232 @@
-const loginForm =
-    document.getElementById("loginForm");
+document.addEventListener("DOMContentLoaded", function () {
 
-const emailInput =
-    document.getElementById("loginEmail");
+    const loginForm =
+        document.getElementById("loginForm");
 
-const passwordInput =
-    document.getElementById("loginPassword");
+    const emailInput =
+        document.getElementById("loginEmail");
 
-const loginMessage =
-    document.getElementById("loginMessage");
+    const passwordInput =
+        document.getElementById("loginPassword");
 
-const loginEye =
-    document.getElementById("loginEye");
+    const loginMessage =
+        document.getElementById("loginMessage");
 
-const forgotPassword =
-    document.getElementById("forgotPassword");
-
-
-// =====================================================
-// SHOW / HIDE PASSWORD
-// =====================================================
-
-loginEye.addEventListener("click", function () {
-
-    if (passwordInput.type === "password") {
-
-        passwordInput.type = "text";
-
-        loginEye.textContent = "○";
-
-    } else {
-
-        passwordInput.type = "password";
-
-        loginEye.textContent = "◉";
-
-    }
-
-});
+    const loginEye =
+        document.getElementById("loginEye");
 
 
-// =====================================================
-// FORGOT PASSWORD
-// =====================================================
+    // =====================================================
+    // PASSWORD SHOW / HIDE
+    // =====================================================
 
-forgotPassword.addEventListener(
-    "click",
-    function (event) {
+    if (loginEye) {
 
-        event.preventDefault();
+        loginEye.addEventListener(
+            "click",
+            function () {
 
-        loginMessage.textContent =
-            "Password recovery will be available soon.";
+                if (
+                    passwordInput.type ===
+                    "password"
+                ) {
 
-        loginMessage.className =
-            "message";
+                    passwordInput.type =
+                        "text";
 
-    }
-);
+                    loginEye.textContent =
+                        "◉";
 
+                } else {
 
-// =====================================================
-// LOGIN
-// =====================================================
+                    passwordInput.type =
+                        "password";
 
-loginForm.addEventListener(
-    "submit",
-    async function (event) {
-
-        event.preventDefault();
-
-
-        loginMessage.textContent =
-            "";
-
-        loginMessage.className =
-            "message";
-
-
-        const email =
-            emailInput.value.trim();
-
-        const password =
-            passwordInput.value;
-
-
-        // =================================================
-        // EMPTY FIELD VALIDATION
-        // =================================================
-
-        if (!email || !password) {
-
-            showError(
-                "Please enter your email and password."
-            );
-
-            return;
-
-        }
-
-
-        // =================================================
-        // EMAIL VALIDATION
-        // =================================================
-
-        if (!isValidEmail(email)) {
-
-            showError(
-                "Please enter a valid email address."
-            );
-
-            return;
-
-        }
-
-
-        // =================================================
-        // SHOW LOADING
-        // =================================================
-
-        loginMessage.textContent =
-            "Signing in...";
-
-        loginMessage.className =
-            "message";
-
-
-        try {
-
-            // =================================================
-            // CONNECT TO FLASK BACKEND
-            // =================================================
-
-            const response = await fetch(
-                "http://127.0.0.1:5000/api/login",
-                {
-
-                    method: "POST",
-
-                    headers: {
-
-                        "Content-Type":
-                            "application/json"
-
-                    },
-
-                    credentials: "include",
-
-                    body: JSON.stringify({
-
-                        email: email,
-
-                        password: password
-
-                    })
+                    loginEye.textContent =
+                        "◉";
 
                 }
-            );
+
+            }
+        );
+
+    }
 
 
-            // =================================================
-            // READ BACKEND RESPONSE
-            // =================================================
+    // =====================================================
+    // LOGIN
+    // =====================================================
 
-            const data =
-                await response.json();
+    loginForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
 
 
-            // =================================================
-            // LOGIN FAILED
-            // =================================================
+            const email =
+                emailInput.value.trim();
 
-            if (!response.ok) {
+            const password =
+                passwordInput.value;
 
-                showError(
-                    data.message ||
-                    "Invalid email or password."
-                );
+
+            loginMessage.textContent =
+                "";
+
+
+            // -------------------------------------------------
+            // VALIDATION
+            // -------------------------------------------------
+
+            if (!email) {
+
+                loginMessage.textContent =
+                    "Please enter your email address.";
 
                 return;
 
             }
 
 
-            // =================================================
-            // LOGIN SUCCESSFUL
-            // =================================================
+            if (!password) {
 
-            localStorage.setItem(
+                loginMessage.textContent =
+                    "Please enter your password.";
 
-                "FlickCurrentUser",
+                return;
 
-                JSON.stringify(
-                    data.user
-                )
-
-            );
+            }
 
 
-            loginMessage.textContent =
-                "Login successful. Redirecting...";
+            // -------------------------------------------------
+            // DISABLE BUTTON
+            // -------------------------------------------------
 
-            loginMessage.className =
-                "message success";
-
-
-            // =================================================
-            // REDIRECT TO DASHBOARD
-            // =================================================
-
-            setTimeout(function () {
-
-                window.location.href =
-                    "index.html";
-
-            }, 700);
+            const button =
+                loginForm.querySelector(
+                    ".main-button"
+                );
 
 
-        } catch (error) {
-
-            console.error(
-                "Login error:",
-                error
-            );
+            const originalText =
+                button.innerHTML;
 
 
-            showError(
-                "Unable to connect to the server. Make sure Flask is running."
-            );
+            button.disabled =
+                true;
+
+
+            button.innerHTML =
+                "Signing in...";
+
+
+            try {
+
+                // =================================================
+                // CALL FLASK LOGIN API
+                // =================================================
+
+                const response =
+                    await fetch(
+                        "/api/login",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            credentials:
+                                "include",
+
+                            body:
+                                JSON.stringify({
+
+                                    email:
+                                        email,
+
+                                    password:
+                                        password
+
+                                })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                // =================================================
+                // LOGIN FAILED
+                // =================================================
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    throw new Error(
+                        data.message ||
+                        "Invalid email or password."
+                    );
+
+                }
+
+
+                // =================================================
+                // LOGIN SUCCESSFUL
+                // =================================================
+
+                loginMessage.textContent =
+                    "Login successful. Redirecting...";
+
+
+                loginMessage.classList.add(
+                    "success"
+                );
+
+
+                // Give Flask session a moment
+                // to be established, then open dashboard.
+
+                setTimeout(
+                    function () {
+
+                        window.location.href =
+                            "/";
+
+                    },
+                    300
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Login error:",
+                    error
+                );
+
+
+                loginMessage.textContent =
+                    error.message ||
+                    "Login failed.";
+
+
+            } finally {
+
+                button.disabled =
+                    false;
+
+                button.innerHTML =
+                    originalText;
+
+            }
 
         }
+    );
 
-    }
-);
-
-
-// =====================================================
-// ERROR MESSAGE
-// =====================================================
-
-function showError(message) {
-
-    loginMessage.textContent =
-        message;
-
-    loginMessage.className =
-        "message error";
-
-}
-
-
-// =====================================================
-// EMAIL VALIDATION
-// =====================================================
-
-function isValidEmail(email) {
-
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-}
+});

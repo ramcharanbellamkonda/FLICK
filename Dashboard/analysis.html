@@ -177,6 +177,153 @@
 
         
 
+
+
+        .selected-movie-analyze-button {
+            margin-top: 14px;
+            padding: 11px 16px;
+            border: 0;
+            border-radius: 9px;
+            background: #fff;
+            color: #000;
+            font-weight: 800;
+            font-size: 11px;
+            letter-spacing: .4px;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .selected-movie-analyze-button:hover {
+            transform: translateY(-1px);
+            opacity: .9;
+        }
+
+        /* =====================================================
+           MOVIE SEARCH / AUTOCOMPLETE
+           ===================================================== */
+
+        .movie-search-box {
+            position: relative;
+            z-index: 20;
+            margin-bottom: 22px;
+            padding: 18px;
+            border: 1px solid rgba(255,255,255,0.09);
+            border-radius: 14px;
+            background: rgba(255,255,255,0.025);
+        }
+
+        .movie-search-title {
+            margin-bottom: 10px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            color: #aaa;
+        }
+
+        .movie-search-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .movie-search-row input {
+            flex: 1;
+            min-width: 0;
+            padding: 13px 15px;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 10px;
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            outline: none;
+            font: inherit;
+        }
+
+        .movie-search-row input:focus {
+            border-color: rgba(255,255,255,0.35);
+        }
+
+        .movie-search-button {
+            padding: 13px 18px;
+            border: none;
+            border-radius: 10px;
+            background: #fff;
+            color: #000;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .movie-search-results {
+            position: absolute;
+            z-index: 9999;
+            left: 18px;
+            right: 18px;
+            top: 108px;
+            display: none;
+            max-height: 430px;
+            overflow-y: auto;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px;
+            background: #111;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .movie-search-result {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            cursor: pointer;
+        }
+
+        .movie-search-result:hover {
+            background: rgba(255,255,255,0.07);
+        }
+
+        .movie-search-result img {
+            width: 48px;
+            height: 68px;
+            flex: 0 0 48px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .movie-search-result-info {
+            min-width: 0;
+        }
+
+        .movie-search-result-info strong {
+            display: block;
+            font-size: 13px;
+            line-height: 1.35;
+        }
+
+        .movie-search-result-info small {
+            display: block;
+            margin-top: 4px;
+            color: #777;
+            font-size: 11px;
+        }
+
+        .movie-search-message {
+            margin-top: 10px;
+            color: #777;
+            font-size: 12px;
+        }
+
+        @media (max-width: 600px) {
+            .movie-search-row {
+                flex-direction: column;
+            }
+
+            .movie-search-button {
+                width: 100%;
+            }
+
+            .movie-search-results {
+                top: 150px;
+            }
+        }
+
         /* =====================================================
            MAIN PAGE
            ===================================================== */
@@ -915,6 +1062,50 @@
         }
 
 
+        /* =====================================================
+           REVIEW STAR RATING
+           ===================================================== */
+
+        .review-rating {
+
+            margin-top: 16px;
+
+            text-align: center;
+
+        }
+
+
+        .review-rating-stars {
+
+            font-size: 27px;
+
+            letter-spacing: 3px;
+
+            line-height: 1;
+
+        }
+
+
+        .review-rating-stars .empty {
+
+            opacity: 0.18;
+
+        }
+
+
+        .review-rating-label {
+
+            margin-top: 7px;
+
+            color: #777777;
+
+            font-size: 11px;
+
+            letter-spacing: .5px;
+
+        }
+
+
         .result-details {
 
             margin-top: 20px;
@@ -1124,6 +1315,66 @@
 
     </style>
 
+
+<style>
+.selected-movie {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin: 0 0 22px 0;
+    padding: 16px;
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 14px;
+    background: rgba(255,255,255,0.035);
+}
+.selected-movie img {
+    width: 72px !important;
+    height: 105px !important;
+    flex: 0 0 72px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+.selected-movie-info {
+    min-width: 0;
+}
+.selected-movie-info h2 {
+    margin: 5px 0 7px;
+}
+.selected-movie-info p {
+    margin: 0;
+    color: #999;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.remove-movie-button {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    color: #aaa;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+    z-index: 5;
+}
+
+.remove-movie-button:hover {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    transform: scale(1.05);
+}
+</style>
+
 </head>
 
 
@@ -1240,7 +1491,94 @@
 
             </div>
 
+            <!-- =====================================================
+     SELECTED MOVIE
+====================================================== -->
 
+<div
+    id="selectedMovie"
+    class="selected-movie"
+    style="display:none;"
+>
+
+    <img
+        id="selectedMoviePoster"
+        src=""
+        alt="Selected movie"
+    >
+
+    <div class="selected-movie-info">
+
+        <span class="tag">
+            REVIEWING MOVIE
+        </span>
+
+        <h2 id="selectedMovieTitle">
+            Movie
+        </h2>
+
+        <p id="selectedMovieOverview">
+        </p>
+
+        </div>
+
+        <button
+    type="button"
+    id="removeMovieButton"
+    class="remove-movie-button"
+    title="Remove selected movie"
+>
+    ✕
+</button>
+
+
+
+
+</div>
+
+
+            <!-- =================================================
+                 MOVIE SEARCH / AUTOCOMPLETE
+                 ================================================= -->
+
+            <div class="movie-search-box">
+
+                <div class="movie-search-title">
+                    CHOOSE A MOVIE FOR THIS REVIEW
+                </div>
+
+                <div class="movie-search-row">
+
+                    <input
+                        type="text"
+                        id="movieSearchInput"
+                        placeholder="Search any movie..."
+                        autocomplete="off"
+                    >
+
+                    <button
+                        type="button"
+                        class="movie-search-button"
+                        id="movieSearchButton"
+                    >
+                        SEARCH
+                    </button>
+
+                </div>
+
+                <div
+                    id="movieSearchMessage"
+                    class="movie-search-message"
+                >
+                    Start typing a movie name.
+                </div>
+
+                <div
+                    id="movieSearchResults"
+                    class="movie-search-results"
+                ></div>
+
+            </div>
 
             <!-- =================================================
                  TEXT
@@ -1520,6 +1858,25 @@
                 </p>
 
 
+                <div
+                    class="review-rating"
+                    id="reviewRating"
+                    style="display:none;"
+                >
+
+                    <div
+                        class="review-rating-stars"
+                        id="reviewRatingStars"
+                    ></div>
+
+                    <div
+                        class="review-rating-label"
+                        id="reviewRatingLabel"
+                    ></div>
+
+                </div>
+
+
             </div>
 
 
@@ -1534,7 +1891,7 @@
                     </span>
 
                     <span>
-                        LinearSVC
+                        Logistic Regression
                     </span>
 
                 </div>
@@ -1604,14 +1961,720 @@
 
 
 <script>
+// =========================================================
+// LOAD SELECTED MOVIE
+// =========================================================
 
+async function loadSelectedMovie() {
+
+    let movie = null;
+
+
+    // 1. Normal path: movies.html stores the complete movie.
+    const storedMovie =
+        sessionStorage.getItem(
+            "selectedMovie"
+        );
+
+
+    if (storedMovie) {
+
+        try {
+
+            movie =
+                JSON.parse(
+                    storedMovie
+                );
+
+        }
+        catch (error) {
+
+            console.warn(
+                "Invalid selectedMovie in sessionStorage."
+            );
+
+        }
+
+    }
+
+
+    // 2. Fallback: use movie_id from the URL.
+    // This makes the Top Movies -> Analyzer flow reliable
+    // even if sessionStorage is unavailable.
+    if (
+        !movie ||
+        !movie.id
+    ) {
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+        const movieId =
+            params.get(
+                "movie_id"
+            );
+
+
+        if (movieId) {
+
+            try {
+
+                const response =
+                    await fetch(
+                        BACKEND_URL +
+                        "/api/movies/" +
+                        encodeURIComponent(
+                            movieId
+                        ),
+                        {
+                            credentials:
+                                "include"
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    response.ok &&
+                    data.success
+                ) {
+
+                    movie =
+                        data.movie ||
+                        data;
+
+                }
+
+            }
+            catch (error) {
+
+                console.error(
+                    "Could not load movie by ID:",
+                    error
+                );
+
+            }
+
+        }
+
+    }
+
+
+    if (
+        !movie ||
+        !movie.id
+    ) {
+
+        console.log(
+            "No movie selected."
+        );
+
+        return;
+
+    }
+
+
+    const container =
+        document.getElementById(
+            "selectedMovie"
+        );
+
+
+    const poster =
+        document.getElementById(
+            "selectedMoviePoster"
+        );
+
+
+    const title =
+        document.getElementById(
+            "selectedMovieTitle"
+        );
+
+
+    const overview =
+        document.getElementById(
+            "selectedMovieOverview"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    container.style.display =
+        "flex";
+
+
+    title.textContent =
+        movie.title ||
+        movie.original_title ||
+        "Unknown Movie";
+
+
+    overview.textContent =
+        movie.overview ||
+        "No description available.";
+
+
+    if (movie.poster_path) {
+
+        poster.src =
+            "https://image.tmdb.org/t/p/w300" +
+            movie.poster_path;
+
+    }
+    else {
+
+        poster.src =
+            "BMT.jpeg";
+
+    }
+
+
+    window.selectedMovie =
+        movie;
+
+
+    sessionStorage.setItem(
+        "selectedMovie",
+        JSON.stringify(
+            movie
+        )
+    );
+
+
+    analyzeButton.textContent =
+        "🔍 ANALYZE REVIEW";
+
+
+    console.log(
+        "Selected movie ready for analysis:",
+        movie
+    );
+
+}
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    loadSelectedMovie
+);
 
 /* =========================================================
    BACKEND
    ========================================================= */
 
-const BACKEND_URL =
-    window.location.origin;
+const BACKEND_URL = window.location.origin;
+
+/* =========================================================
+   MOVIE SEARCH / AUTOCOMPLETE
+   ========================================================= */
+
+const movieSearchInput =
+    document.getElementById("movieSearchInput");
+
+const movieSearchButton =
+    document.getElementById("movieSearchButton");
+
+const movieSearchResults =
+    document.getElementById("movieSearchResults");
+
+const movieSearchMessage =
+    document.getElementById("movieSearchMessage");
+
+let movieSearchTimer = null;
+
+
+async function searchMovies(query) {
+
+    query = String(query || "").trim();
+
+    if (!query) {
+
+        movieSearchResults.innerHTML = "";
+        movieSearchResults.style.display = "none";
+
+        movieSearchMessage.textContent =
+            "Start typing a movie name.";
+
+        return;
+
+    }
+
+
+    movieSearchMessage.textContent =
+        "Searching...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                BACKEND_URL +
+                "/api/movies/search?query=" +
+                encodeURIComponent(query),
+                {
+                    credentials: "include"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.error ||
+                data.message ||
+                "Movie search failed."
+            );
+
+        }
+
+
+        renderMovieDropdown(
+            Array.isArray(data.movies)
+                ? data.movies
+                : []
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Movie search error:",
+            error
+        );
+
+        movieSearchResults.innerHTML = "";
+        movieSearchResults.style.display = "none";
+
+        movieSearchMessage.textContent =
+            "Could not search movies.";
+
+    }
+
+}
+
+
+function renderMovieDropdown(movies) {
+
+    movieSearchResults.innerHTML = "";
+
+
+    if (!movies.length) {
+
+        movieSearchResults.style.display =
+            "none";
+
+        movieSearchMessage.textContent =
+            "No movies found.";
+
+        return;
+
+    }
+
+
+    movieSearchMessage.textContent =
+        "Select a movie:";
+
+
+    movies
+        .filter(
+            movie =>
+                movie &&
+                movie.id &&
+                (
+                    movie.title ||
+                    movie.original_title
+                )
+        )
+        .slice(0, 15)
+        .forEach(
+            function(movie) {
+
+                const card =
+                    document.createElement("div");
+
+                card.className =
+                    "movie-search-result";
+
+
+                const title =
+                    movie.title ||
+                    movie.original_title ||
+                    "Unknown Movie";
+
+
+                const year =
+                    movie.release_date
+                        ? movie.release_date.substring(0, 4)
+                        : "Year unavailable";
+
+
+                const poster =
+                    movie.poster_path
+                        ? "https://image.tmdb.org/t/p/w185" +
+                          movie.poster_path
+                        : "https://via.placeholder.com/185x278/111111/777777?text=No+Poster";
+
+
+                card.innerHTML = `
+
+                    <img
+                        src="${poster}"
+                        alt="${escapeHtml(title)}"
+                    >
+
+                    <div class="movie-search-result-info">
+
+                        <strong>
+                            ${escapeHtml(title)}
+                        </strong>
+
+                        <small>
+                            ${escapeHtml(year)}
+                        </small>
+
+                    </div>
+
+                `;
+
+
+                card.addEventListener(
+                    "click",
+                    function() {
+
+                        selectMovieForAnalysis(
+                            movie
+                        );
+
+                    }
+                );
+
+
+                movieSearchResults.appendChild(
+                    card
+                );
+
+            }
+        );
+
+
+    movieSearchResults.style.display =
+        "block";
+
+}
+
+
+function selectMovieForAnalysis(movie) {
+
+    window.selectedMovie =
+        movie;
+
+
+    sessionStorage.setItem(
+        "selectedMovie",
+        JSON.stringify(movie)
+    );
+
+    const container =
+        document.getElementById(
+            "selectedMovie"
+        );
+
+
+    const poster =
+        document.getElementById(
+            "selectedMoviePoster"
+        );
+
+
+    const title =
+        document.getElementById(
+            "selectedMovieTitle"
+        );
+
+
+    const overview =
+        document.getElementById(
+            "selectedMovieOverview"
+        );
+
+
+    container.style.display =
+        "flex";
+
+
+    title.textContent =
+        movie.title ||
+        movie.original_title ||
+        "Unknown Movie";
+
+
+    overview.textContent =
+        movie.overview ||
+        "No description available.";
+
+
+    poster.src =
+        movie.poster_path
+            ? "https://image.tmdb.org/t/p/w300" +
+              movie.poster_path
+            : "https://via.placeholder.com/300x450/111111/777777?text=No+Poster";
+
+
+    movieSearchInput.value =
+        movie.title ||
+        movie.original_title ||
+        "";
+
+
+    movieSearchResults.innerHTML =
+        "";
+
+
+    movieSearchResults.style.display =
+        "none";
+
+
+    movieSearchMessage.textContent =
+        "Selected: " +
+        (
+            movie.title ||
+            movie.original_title ||
+            "Movie"
+        );
+
+
+    analyzeButton.textContent =
+        "🔍 ANALYZE MOVIE REVIEW";
+
+
+    reviewInput.focus();
+
+
+    container.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+
+}
+function removeSelectedMovie() {
+
+    // Clear selected movie from JavaScript memory.
+    window.selectedMovie = null;
+
+    // Clear selected movie from session storage.
+    sessionStorage.removeItem("selectedMovie");
+
+    // IMPORTANT:
+    // Remove movie_id from the URL so loadSelectedMovie()
+    // cannot load the same movie again.
+    const url = new URL(window.location.href);
+    url.searchParams.delete("movie_id");
+
+    window.history.replaceState(
+        {},
+        document.title,
+        url.pathname + url.search + url.hash
+    );
+
+    // Hide the selected movie card.
+    // Use !important because older CSS may contain
+    // display:flex !important.
+    const container =
+        document.getElementById("selectedMovie");
+
+    if (container) {
+        container.style.setProperty(
+            "display",
+            "none",
+            "important"
+        );
+    }
+
+    // Clear movie search input.
+    const searchInput =
+        document.getElementById("movieSearchInput");
+
+    if (searchInput) {
+        searchInput.value = "";
+    }
+
+    // Clear movie search results.
+    const results =
+        document.getElementById("movieSearchResults");
+
+    if (results) {
+        results.innerHTML = "";
+        results.style.display = "none";
+    }
+
+    // Reset search message.
+    const message =
+        document.getElementById("movieSearchMessage");
+
+    if (message) {
+        message.textContent =
+            "Start typing a movie name.";
+    }
+
+    // Clear review text as well.
+    const review =
+        document.getElementById("reviewInput");
+
+    if (review) {
+        review.value = "";
+    }
+
+    const count =
+        document.getElementById("charCount");
+
+    if (count) {
+        count.textContent = "0 characters";
+    }
+
+    // Reset analyze button.
+    const analyze =
+        document.getElementById("analyzeButton");
+
+    if (analyze) {
+        analyze.textContent =
+            "🔍 ANALYZE REVIEW";
+    }
+
+    console.log("Selected movie removed.");
+}
+
+const removeMovieButton =
+    document.getElementById("removeMovieButton");
+
+if (removeMovieButton) {
+    removeMovieButton.addEventListener(
+        "click",
+        removeSelectedMovie
+    );
+}
+
+
+movieSearchInput.addEventListener(
+    "input",
+    function() {
+
+        const query =
+            movieSearchInput.value.trim();
+
+
+        clearTimeout(
+            movieSearchTimer
+        );
+
+
+        if (!query) {
+
+            movieSearchResults.innerHTML =
+                "";
+
+            movieSearchResults.style.display =
+                "none";
+
+            movieSearchMessage.textContent =
+                "Start typing a movie name.";
+
+            return;
+
+        }
+
+
+        movieSearchTimer =
+            setTimeout(
+                function() {
+
+                    searchMovies(
+                        query
+                    );
+
+                },
+                300
+            );
+
+    }
+);
+
+
+movieSearchInput.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            event.preventDefault();
+
+            searchMovies(
+                movieSearchInput.value
+            );
+
+        }
+
+
+        if (
+            event.key === "Escape"
+        ) {
+
+            movieSearchResults.style.display =
+                "none";
+
+        }
+
+    }
+);
+
+
+movieSearchButton.addEventListener(
+    "click",
+    function() {
+
+        searchMovies(
+            movieSearchInput.value
+        );
+
+    }
+);
+
+
+document.addEventListener(
+    "click",
+    function(event) {
+
+        if (
+            !event.target.closest(
+                ".movie-search-box"
+            )
+        ) {
+
+            movieSearchResults.style.display =
+                "none";
+
+        }
+
+    }
+);
+
 
 
 /* =========================================================
@@ -2544,7 +3607,21 @@ async function analyzeReview() {
 
                     body: JSON.stringify({
 
-                        text: text
+                        text: text,
+                        movie_id:
+        window.selectedMovie
+            ? window.selectedMovie.id
+            : null,
+
+    movie_title:
+        window.selectedMovie
+            ? window.selectedMovie.title
+            : null,
+
+    movie_poster:
+        window.selectedMovie
+            ? window.selectedMovie.poster_path
+            : null
 
                     })
 
@@ -2583,8 +3660,7 @@ async function analyzeReview() {
         const prediction =
             data.prediction;
 
-
-        /* =================================================
+                /* =================================================
            UPDATE TEXT
            ================================================= */
 
@@ -2684,13 +3760,18 @@ async function analyzeReview() {
             data.confidence !== undefined
         ) {
 
-            confidenceText.textContent =
-
+            const relativeScore =
                 Math.round(
-                    data.confidence * 100
-                ) +
+                    data.relative_score !== undefined
+                        ? data.relative_score
+                        : data.confidence
+                );
 
-                "% relative model score";
+            confidenceText.textContent =
+                sentiment +
+                " relative score: " +
+                relativeScore +
+                "%";
 
         }
 
@@ -2700,6 +3781,107 @@ async function analyzeReview() {
                 "Model prediction completed";
 
         }
+
+
+        /* =================================================
+           REVIEW STAR RATING
+           =================================================
+           Stars represent the audience rating inferred from
+           sentiment. Confidence stays separate and is never
+           displayed as a movie rating.
+        */
+
+        const confidenceNumber =
+            Number(data.confidence);
+
+        let reviewRating = 3;
+
+
+        if (
+            sentiment === "Positive"
+        ) {
+
+            reviewRating =
+                Number.isFinite(
+                    confidenceNumber
+                ) &&
+                confidenceNumber >= 85
+                    ? 5
+                    : 4;
+
+        }
+
+        else if (
+            sentiment === "Negative"
+        ) {
+
+            reviewRating =
+                Number.isFinite(
+                    confidenceNumber
+                ) &&
+                confidenceNumber >= 85
+                    ? 1
+                    : 2;
+
+        }
+
+        else {
+
+            reviewRating = 3;
+
+        }
+
+
+        const reviewRatingBox =
+            document.getElementById(
+                "reviewRating"
+            );
+
+
+        const reviewRatingStars =
+            document.getElementById(
+                "reviewRatingStars"
+            );
+
+
+        const reviewRatingLabel =
+            document.getElementById(
+                "reviewRatingLabel"
+            );
+
+
+        if (
+            reviewRatingBox &&
+            reviewRatingStars &&
+            reviewRatingLabel
+        ) {
+
+            reviewRatingStars.innerHTML =
+                "★".repeat(
+                    reviewRating
+                ) +
+                '<span class="empty">' +
+                "★".repeat(
+                    5 - reviewRating
+                ) +
+                "</span>";
+
+
+            reviewRatingLabel.textContent =
+                reviewRating +
+                "/5 audience rating";
+
+
+            reviewRatingBox.style.display =
+                "block";
+
+        }
+
+
+        // Keep this available to the existing
+        // history-saving code.
+        window.lastReviewRating =
+            reviewRating;
 
 
         /* =================================================
@@ -2727,6 +3909,15 @@ async function analyzeReview() {
 
         mainStatus.textContent =
             "✅ Analysis completed using your trained sentiment model.";
+
+
+        // Clear the submitted review after it has been saved.
+        // Keep the selected movie so another review can be
+        // submitted for the same movie.
+        reviewInput.value = "";
+
+        charCount.textContent =
+            "0 characters";
 
 
         console.log(

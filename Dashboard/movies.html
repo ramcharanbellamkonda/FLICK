@@ -1,112 +1,752 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="cards.css" />
-    <link rel="stylesheet" href="posters.css" />
 
-    <title>Document</title>
-  </head>
-  <body>
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/cards.css">
+    <link rel="stylesheet" href="/posters.css">
+
+    <title>FLICK | Movies</title>
+
+
+<style>
+.movie-review-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 14px;
+    padding: 12px 16px;
+    border: 0;
+    border-radius: 9px;
+    background: #fff;
+    color: #000;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .4px;
+    cursor: pointer;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+.movie-review-btn:hover {
+    transform: translateY(-1px);
+}
+</style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         NAVBAR
+    ====================================================== -->
+
     <div id="header"></div>
-    <br /><br />
-    <div id="pets">
-      <div class="card">
-        <img src="img1 - Copy.jpg" alt="jerry" />
-        <h3>The Odyseey</h3>
-        <p>
-          After the Trojan War, Odysseus faces a dangerous voyage back to
-          Ithaca, meeting creatures like the Cyclops Polyphemus, Sirens, and
-          Calypso along the way.
-        </p>
-      </div>
-      <div class="card">
-        <img src="img10.jpeg" alt="tom" />
-        <h3>The Paradise</h3>
-        <p>
-          In 1980s Secunderabad, a marginalized tribe battles discrimination and
-          fights for citizenship under an unexpected leader's guidance,
-          challenging systemic oppression.
-        </p>
-      </div>
-      <div class="card">
-        <img src="dark-knight.jpg" alt="tom" />
-        <h3>The Dark Knight</h3>
-        <p>
-          When a menace known as the Joker wreaks havoc and chaos on the people
-          of Gotham, Batman, James Gordon and Harvey Dent must work together to
-          put an end to the madness.
-        </p>
-      </div>
 
-      <div class="card">
-        <img src="img2.jpg" alt="tom" />
-        <h3>Ustaad Bhagat Singh</h3>
-        <p>
-          Inspired by his teacher, who named him Bhagat Singh and shaped his
-          values, a tribal boy grows up rooted in strong morals and unwavering
-          courage. Standing firm against injustice, he takes on evil forces
-          despite overwhelming odds.
-        </p>
-      </div>
 
-      <div class="card">
-        <img src="img4.jpg" alt="tom" />
-        <h3>Peddi</h3>
-        <p>
-          Peddi struggles to secure official recognition for his marginalized
-          village against systemic oppression and physical ruin, ultimately
-          finding redemption through a grueling transition into a world-class
-          para track athlete.
-        </p>
-      </div>
 
-      <div class="card">
-        <img src="img5.jpg" alt="tom" />
-        <h3>Kabir Singh</h3>
-        <p>
-          An exalted but short-fused surgeon plunges into a spiral of drugs,
-          alcohol and rage after his intense relationship with his girlfriend
-          turbulently ends.
-        </p>
-      </div>
+    <!-- =====================================================
+         MOVIES HEADER
+    ====================================================== -->
 
-      <div class="card">
-        <img src="img6.jpg" alt="tom" />
-        <h3>Chhaava</h3>
-        <p>
-          After the death of his father, warrior-king Sambhaji Maharaj battles
-          Mughal forces led by Aurangzeb to keep the Maratha Empire alive.
-        </p>
-      </div>
+    <main class="movies-page">
 
-      <div class="card">
-        <img src="img7.jpg" alt="tom" />
-        <h3>Oppenheimer</h3>
-        <p>
-          A dramatization of the life story of J. Robert Oppenheimer, the
-          physicist who had a large hand in the development of the atomic bombs
-          that brought an end to World War II.
-        </p>
-      </div>
+        <section class="movies-header">
 
-      <div class="card">
-        <img src="img11.avif" alt="tom" />
-        <h3>DC</h3>
-        <p>
-          Rebel Devadas joins forces with Chandra in a dangerous world where passion and peril collide. Their turbulent alliance demands bloodshed and tests loyalties 
-          as survival becomes the ultimate stakes in their fight.
-        </p>
-      </div>
-    </div>
+            <p class="tag">
+                EXPLORE MOVIES
+            </p>
 
-    <div class="end">
-      <h3>and many more....!!!</h3>
-    </div>
+            <h1>
+                Discover Movies
+            </h1>
+
+            <p>
+                Explore popular movies and choose one
+                to analyze its audience sentiment.
+            </p>
+
+
+            <!-- SEARCH -->
+
+            <div class="movie-search">
+
+                <input
+                    type="text"
+                    id="movieSearch"
+                    placeholder="Search for a movie..."
+                    autocomplete="off"
+                >
+
+                <button
+                    type="button"
+                    id="searchButton"
+                >
+                    SEARCH
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             LOADING
+        ================================================== -->
+
+        <div
+            id="movieLoading"
+            class="movie-message"
+        >
+            Loading movies...
+        </div>
+
+
+
+        <!-- =================================================
+             ERROR
+        ================================================== -->
+
+        <div
+            id="movieError"
+            class="movie-message"
+            style="display:none;"
+        >
+            Could not load movies.
+        </div>
+
+
+
+        <!-- =================================================
+             MOVIE GRID
+        ================================================== -->
+
+        <section
+            id="movieGrid"
+            class="movie-grid"
+        ></section>
+
+
+    </main>
+
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
 
     <div id="footer"></div>
-    <script src="components.js"></script>
-  </body>
+
+
+
+    <!-- =====================================================
+         COMPONENTS
+    ====================================================== -->
+
+    <script src="/components.js"></script>
+
+
+
+    <!-- =====================================================
+         MOVIES JAVASCRIPT
+    ====================================================== -->
+
+    <script>
+
+        const TMDB_IMAGE_URL =
+            "https://image.tmdb.org/t/p/w500";
+
+        const movieGrid =
+            document.getElementById("movieGrid");
+
+        const movieLoading =
+            document.getElementById("movieLoading");
+
+        const movieError =
+            document.getElementById("movieError");
+
+        const movieSearch =
+            document.getElementById("movieSearch");
+
+        const searchButton =
+            document.getElementById("searchButton");
+
+
+        // =====================================================
+        // API HELPER
+        // =====================================================
+
+        async function getJson(url) {
+
+            const response =
+                await fetch(
+                    url,
+                    {
+                        method: "GET",
+                        cache: "no-store",
+                        credentials: "same-origin",
+                        headers: {
+                            "Accept":
+                                "application/json"
+                        }
+                    }
+                );
+
+
+            const contentType =
+                response.headers.get(
+                    "content-type"
+                ) || "";
+
+
+            const raw =
+                await response.text();
+
+
+            console.log(
+                "API:",
+                url,
+                "STATUS:",
+                response.status,
+                "TYPE:",
+                contentType
+            );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "API request failed: HTTP " +
+                    response.status
+                );
+
+            }
+
+
+            // Flask should return JSON.
+            // If it returns an HTML page, show a useful error
+            // instead of the confusing "Unexpected token <".
+            if (
+                !contentType
+                    .toLowerCase()
+                    .includes("application/json")
+            ) {
+
+                console.error(
+                    "Non-JSON API response:",
+                    raw.substring(0, 500)
+                );
+
+                throw new Error(
+                    "Movie API returned HTML instead of JSON. " +
+                    "Make sure Flask is running on " +
+                    "http://127.0.0.1:5000."
+                );
+
+            }
+
+
+            try {
+
+                return JSON.parse(raw);
+
+            }
+            catch (error) {
+
+                console.error(
+                    "Invalid JSON:",
+                    raw
+                );
+
+                throw new Error(
+                    "Movie API returned invalid JSON."
+                );
+
+            }
+
+        }
+
+
+        // =====================================================
+        // LOAD POPULAR MOVIES
+        // =====================================================
+
+        async function loadMovies() {
+
+            movieLoading.style.display =
+                "block";
+
+            movieError.style.display =
+                "none";
+
+            movieGrid.innerHTML =
+                "";
+
+
+            try {
+
+                const data =
+                    await getJson(
+                        "/api/movies"
+                    );
+
+
+                if (
+                    !data ||
+                    data.success !== true
+                ) {
+
+                    throw new Error(
+                        data?.error ||
+                        data?.message ||
+                        "Failed to load movies."
+                    );
+
+                }
+
+
+                const movies =
+                    Array.isArray(
+                        data.movies
+                    )
+                        ? data.movies
+                        : [];
+
+
+                movieLoading.style.display =
+                    "none";
+
+
+                if (!movies.length) {
+
+                    movieGrid.innerHTML = `
+
+                        <div class="movie-message">
+
+                            <h2>
+                                No movies available
+                            </h2>
+
+                            <p>
+                                The movie API returned no movies.
+                            </p>
+
+                        </div>
+
+                    `;
+
+                    return;
+
+                }
+
+
+                renderMovies(
+                    movies
+                );
+
+            }
+            catch (error) {
+
+                console.error(
+                    "Movie loading error:",
+                    error
+                );
+
+                movieLoading.style.display =
+                    "none";
+
+                movieError.style.display =
+                    "block";
+
+                movieError.textContent =
+                    error.message ||
+                    "Could not load movies.";
+
+            }
+
+        }
+
+
+        // =====================================================
+        // SEARCH MOVIES
+        // =====================================================
+
+        async function searchMovies() {
+
+            const query =
+                movieSearch.value.trim();
+
+
+            if (!query) {
+
+                loadMovies();
+
+                return;
+
+            }
+
+
+            movieLoading.style.display =
+                "block";
+
+            movieError.style.display =
+                "none";
+
+            movieGrid.innerHTML =
+                "";
+
+
+            try {
+
+                const data =
+                    await getJson(
+                        "/api/movies/search?query=" +
+                        encodeURIComponent(
+                            query
+                        )
+                    );
+
+
+                if (
+                    !data ||
+                    data.success !== true
+                ) {
+
+                    throw new Error(
+                        data?.error ||
+                        data?.message ||
+                        "Movie search failed."
+                    );
+
+                }
+
+
+                movieLoading.style.display =
+                    "none";
+
+
+                const movies =
+                    Array.isArray(
+                        data.movies
+                    )
+                        ? data.movies
+                        : [];
+
+
+                if (!movies.length) {
+
+                    movieGrid.innerHTML = `
+
+                        <div class="movie-message">
+
+                            <h2>
+                                No movies found
+                            </h2>
+
+                            <p>
+                                Try searching with
+                                another title.
+                            </p>
+
+                        </div>
+
+                    `;
+
+                    return;
+
+                }
+
+
+                renderMovies(
+                    movies
+                );
+
+            }
+            catch (error) {
+
+                console.error(
+                    "Movie search error:",
+                    error
+                );
+
+                movieLoading.style.display =
+                    "none";
+
+                movieError.style.display =
+                    "block";
+
+                movieError.textContent =
+                    error.message ||
+                    "Could not search movies.";
+
+            }
+
+        }
+
+
+        // =====================================================
+        // RENDER MOVIES
+        // =====================================================
+
+        function renderMovies(
+            movies
+        ) {
+
+            movieGrid.innerHTML =
+                "";
+
+
+            movies.forEach(
+                function(movie) {
+
+                    const card =
+                        document.createElement(
+                            "article"
+                        );
+
+
+                    card.className =
+                        "card";
+
+
+                    const poster =
+                        movie.poster_path
+                            ? TMDB_IMAGE_URL +
+                              movie.poster_path
+                            : "/BMT.jpeg";
+
+
+                    const title =
+                        movie.title ||
+                        movie.original_title ||
+                        "Unknown Movie";
+
+
+                    const overview =
+                        movie.overview ||
+                        "No movie description available.";
+
+
+                    const rating =
+                        movie.vote_average !== undefined &&
+                        movie.vote_average !== null
+                            ? Number(
+                                movie.vote_average
+                              ).toFixed(1)
+                            : "N/A";
+
+
+                    const releaseDate =
+                        movie.release_date ||
+                        "Release date unavailable";
+
+
+                    card.innerHTML = `
+
+                        <img
+                            src="${poster}"
+                            alt="${escapeHtml(title)}"
+                            loading="lazy"
+                        >
+
+                        <div class="movie-card-content">
+
+                            <h3>
+                                ${escapeHtml(title)}
+                            </h3>
+
+                            <p class="movie-rating">
+                                ⭐ ${rating}
+                            </p>
+
+                            <p>
+                                ${escapeHtml(overview)}
+                            </p>
+
+                            <p class="movie-release">
+                                ${escapeHtml(releaseDate)}
+                            </p>
+
+                            <button
+                                type="button"
+                                class="movie-review-btn"
+                            >
+                                ANALYZE THIS MOVIE →
+                            </button>
+
+                        </div>
+
+                    `;
+
+
+                    const reviewButton =
+                        card.querySelector(
+                            ".movie-review-btn"
+                        );
+
+
+                    reviewButton.addEventListener(
+                        "click",
+                        function() {
+
+                            openMovieAnalysis(
+                                movie
+                            );
+
+                        }
+                    );
+
+
+                    movieGrid.appendChild(
+                        card
+                    );
+
+                }
+            );
+
+        }
+
+
+        // =====================================================
+        // OPEN MOVIE ANALYSIS
+        // =====================================================
+
+        function openMovieAnalysis(
+            movie
+        ) {
+
+            if (
+                !movie ||
+                !movie.id
+            ) {
+
+                console.error(
+                    "Invalid movie:",
+                    movie
+                );
+
+                return;
+
+            }
+
+
+            const movieData = {
+
+                id:
+                    movie.id,
+
+                title:
+                    movie.title ||
+                    movie.original_title ||
+                    "",
+
+                poster_path:
+                    movie.poster_path ||
+                    "",
+
+                overview:
+                    movie.overview ||
+                    "",
+
+                release_date:
+                    movie.release_date ||
+                    "",
+
+                vote_average:
+                    movie.vote_average ||
+                    0
+
+            };
+
+
+            sessionStorage.setItem(
+                "selectedMovie",
+                JSON.stringify(
+                    movieData
+                )
+            );
+
+
+            window.location.href =
+                "/analysis.html?movie_id=" +
+                encodeURIComponent(
+                    movieData.id
+                );
+
+        }
+
+
+        // =====================================================
+        // ESCAPE HTML
+        // =====================================================
+
+        function escapeHtml(
+            value
+        ) {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.textContent =
+                value ?? "";
+
+
+            return div.innerHTML;
+
+        }
+
+
+        // =====================================================
+        // EVENTS
+        // =====================================================
+
+        searchButton.addEventListener(
+            "click",
+            searchMovies
+        );
+
+
+        movieSearch.addEventListener(
+            "keydown",
+            function(event) {
+
+                if (
+                    event.key === "Enter"
+                ) {
+
+                    event.preventDefault();
+
+                    searchMovies();
+
+                }
+
+            }
+        );
+
+
+        // =====================================================
+        // INITIAL LOAD
+        // =====================================================
+
+        loadMovies();
+
+    </script>
+
+
+</body>
+
 </html>

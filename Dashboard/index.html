@@ -1,112 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FLICK</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="cards.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-</head>
 
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>FLICK</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="cards.css">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+</head>
 
 
 <body>
 
-  <!-- Navbar -->
-  <div id="header"></div>
 
-  <!-- Hero Section -->
-  <!-- Hero Section -->
-<section class="hero">
+    <!-- =========================
+         NAVBAR
+    ========================== -->
 
-    <!-- LEFT SIDE -->
-    <div class="hero-content">
+    <div id="header"></div>
 
-        <div class="hero-top">
-            <span class="tag">
-                AI-POWERED SENTIMENT ANALYSIS
-            </span>
+
+    <!-- =========================
+         HERO SECTION
+    ========================== -->
+
+    <section class="hero">
+
+
+        <!-- LEFT SIDE -->
+
+        <div class="hero-content">
+
+
+            <div class="hero-top">
+
+                <span class="tag">
+                    AI-POWERED SENTIMENT ANALYSIS
+                </span>
+
+            </div>
+
+
+            <h1 class="hero-title">
+
+                <span class="word">
+                    Turn
+                </span>
+
+                <span class="word">
+                    movie
+                </span>
+
+                <span class="word">
+                    reviews
+                </span>
+
+                <span class="word">
+                    into
+                </span>
+
+                <span class="word">
+                    AI-Powered
+                </span>
+
+                <span class="word">
+                    insights.
+                </span>
+
+            </h1>
+
+
+            <p class="hero-desc">
+
+                Analyze audience reviews with NLP and instantly discover
+                sentiment, confidence, and what viewers really think.
+
+            </p>
+
+
+            <div class="hero-buttons">
+
+
+                <a
+                    href="analysis.html"
+                    class="btn-primary"
+                >
+                    ANALYZE REVIEW →
+                </a>
+
+
+            
+
+
+            </div>
+
+
         </div>
 
-        <h1 class="hero-title">
 
-            <span class="word">Turn</span>
-            <span class="word">movie</span>
-            <span class="word">reviews</span>
-            <span class="word">into</span>
-            <span class="word">AI-Powered</span>
-            <span class="word">insights.</span>
+        <!-- =========================
+             RIGHT SIDE - CUBE
+        ========================== -->
 
-        </h1>
+        <div class="cube-container">
 
-        <p class="hero-desc">
-            Analyze audience reviews with NLP and instantly discover 
-            sentiment, confidence, and what viewers really think.
-        </p>
-
-        <div class="hero-buttons">
-
-            <a href="analysis.html"
-               class="btn-primary">
-                ANALYZE REVIEW →
-            </a>
-
-            <a href="#features"
-               class="btn-secondary">
-                VIEW FEATURES →
-            </a>
+            <div id="cube"></div>
 
         </div>
 
-    </div>
+
+    </section>
 
 
-    <!-- RIGHT SIDE -->
-    <div class="cube-container">
+    <!-- =========================
+         FOOTER
+    ========================== -->
 
-        <div id="cube"></div>
-
-    </div>
-
-</section>
+    <div id="footer"></div>
 
 
-  <!--- CARDSSS-->
+    <!-- =========================
+         COMPONENTS
+    ========================== -->
 
-  <div class="slider">
-  <div class="slider-track">
+    <script src="components.js"></script>
 
-    <div id="flow"></div>
 
-    
-   
+    <!-- =========================
+         CUBE LOADER
+    ========================== -->
 
-<div id="footer"></div>
-<script src="components.js"></script>
+    <script>
 
-<script>
-  fetch("cube.html")
-    .then(response => response.text())
-    .then(html => {
+        fetch("cube.html")
 
-      document.getElementById("cube").innerHTML = html;
+            .then(
+                response =>
+                    response.text()
+            )
 
-      // Load cube logic AFTER cube HTML exists
-      const script = document.createElement("script");
-      script.src = "cube.js";
+            .then(
+                html => {
 
-      document.body.appendChild(script);
+                    document
+                        .getElementById("cube")
+                        .innerHTML = html;
 
-    })
-    .catch(error => {
-      console.error("Failed to load cube:", error);
-    });
-</script>
-  
+
+                    const script =
+                        document.createElement(
+                            "script"
+                        );
+
+
+                    script.src =
+                        "cube.js";
+
+
+                    document.body.appendChild(
+                        script
+                    );
+
+                }
+            )
+
+            .catch(
+                error => {
+
+                    console.error(
+                        "Failed to load cube:",
+                        error
+                    );
+
+                }
+            );
+
+    </script>
 
 
 </body>
+
 </html>

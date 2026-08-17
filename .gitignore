@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Test/cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Temporary files
+uploads/
+tmp/
+temp/
+
+# Node dependencies
+node_modules/
