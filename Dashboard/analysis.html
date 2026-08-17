@@ -2034,7 +2034,6 @@ async function loadSelectedMovie() {
                         }
                     );
 
-
                 const responseText =
     await response.text();
 
@@ -2048,6 +2047,15 @@ console.log(
     responseText
 );
 
+if (!responseText.trim()) {
+
+    throw new Error(
+        "Server returned an empty response. HTTP status: " +
+        response.status
+    );
+
+}
+
 let data;
 
 try {
@@ -2059,19 +2067,14 @@ try {
 } catch (error) {
 
     throw new Error(
-        "Server returned non-JSON response. " +
-        "Status: " +
+        "Server returned invalid JSON. HTTP status: " +
         response.status +
-        " Response: " +
-        responseText.substring(
-            0,
-            200
-        )
+        ". Response: " +
+        responseText.substring(0, 300)
     );
 
 }
-
-
+                
                 if (
                     response.ok &&
                     data.success
@@ -2259,8 +2262,46 @@ async function searchMovies(query) {
             );
 
 
-        const data =
-            await response.json();
+        const responseText =
+    await response.text();
+
+console.log(
+    "TRANSCRIBE STATUS:",
+    response.status
+);
+
+console.log(
+    "TRANSCRIBE RESPONSE:",
+    responseText
+);
+
+if (!responseText.trim()) {
+
+    throw new Error(
+        "Server returned an empty response. HTTP status: " +
+        response.status
+    );
+
+}
+
+let data;
+
+try {
+
+    data = JSON.parse(
+        responseText
+    );
+
+} catch (error) {
+
+    throw new Error(
+        "Server returned invalid JSON. HTTP status: " +
+        response.status +
+        ". Response: " +
+        responseText.substring(0, 300)
+    );
+
+}
 
 
         if (
@@ -3393,8 +3434,46 @@ async function transcribeFile(
             );
 
 
-        const data =
-            await response.json();
+        const responseText =
+    await response.text();
+
+console.log(
+    "TRANSCRIBE STATUS:",
+    response.status
+);
+
+console.log(
+    "TRANSCRIBE RESPONSE:",
+    responseText
+);
+
+if (!responseText.trim()) {
+
+    throw new Error(
+        "Server returned an empty response. HTTP status: " +
+        response.status
+    );
+
+}
+
+let data;
+
+try {
+
+    data = JSON.parse(
+        responseText
+    );
+
+} catch (error) {
+
+    throw new Error(
+        "Server returned invalid JSON. HTTP status: " +
+        response.status +
+        ". Response: " +
+        responseText.substring(0, 300)
+    );
+
+}
 
 
         if (
@@ -3663,8 +3742,46 @@ async function analyzeReview() {
             );
 
 
-        const data =
-            await response.json();
+        const responseText =
+    await response.text();
+
+console.log(
+    "TRANSCRIBE STATUS:",
+    response.status
+);
+
+console.log(
+    "TRANSCRIBE RESPONSE:",
+    responseText
+);
+
+if (!responseText.trim()) {
+
+    throw new Error(
+        "Server returned an empty response. HTTP status: " +
+        response.status
+    );
+
+}
+
+let data;
+
+try {
+
+    data = JSON.parse(
+        responseText
+    );
+
+} catch (error) {
+
+    throw new Error(
+        "Server returned invalid JSON. HTTP status: " +
+        response.status +
+        ". Response: " +
+        responseText.substring(0, 300)
+    );
+
+}
 
 
         if (
