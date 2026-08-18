@@ -114,16 +114,16 @@ async function checkLoginStatus() {
     try {
 
         const response =
-            await fetch(
-                "/api/me",
-                {
-                    method: "GET",
+    await fetch(
+        "https://flick-qorf.onrender.com/api/me",
+        {
+            method: "GET",
 
-                    credentials: "include",
+            credentials: "include",
 
-                    cache: "no-store"
-                }
-            );
+            cache: "no-store"
+        }
+    );
 
 
         const data =
@@ -238,7 +238,7 @@ async function handleLogout(event) {
 
         const response =
             await fetch(
-                "/api/logout",
+               "https://flick-qorf.onrender.com/api/logout",
                 {
                     method: "POST",
 

@@ -37,9 +37,17 @@ TMDB_API_KEY = os.getenv("TMDB_API_KEY")
 app = Flask(__name__)
 
 app.secret_key = SECRET_KEY
-
+app.config["SESSION_COOKIE_SAMESITE"] = "None"
+app.config["SESSION_COOKIE_SECURE"] = True
 CORS(
     app,
+    resources={
+        r"/*": {
+            "origins": [
+                "https://flick-dun.vercel.app"
+            ]
+        }
+    },
     supports_credentials=True
 )
 

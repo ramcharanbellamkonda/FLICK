@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 const response =
                     await fetch(
-                        "/api/login",
+    "https://flick-qorf.onrender.com/api/login",
                         {
                             method: "POST",
 
