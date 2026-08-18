@@ -2149,10 +2149,7 @@ if __name__ == "__main__":
         "FLICK WEBSITE:"
     )
 
-    print(
-        "http://127.0.0.1:5000/"
-    )
-
+    print("FLICK WEBSITE: http://localhost:5000/")
     print(
         "======================================"
     )
@@ -2161,21 +2158,13 @@ if __name__ == "__main__":
         "API STATUS:"
     )
 
-    print(
-        "http://127.0.0.1:5000/api/status"
-    )
+    print("API STATUS: http://localhost:5000/api/status")
 
     print(
         "======================================"
     )
-
-
     app.run(
-
-        host="127.0.0.1",
-
-        port=5000,
-
-        debug=True
-
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 5000)),
+        debug=False
     )
